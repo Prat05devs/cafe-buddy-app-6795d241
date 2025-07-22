@@ -1,0 +1,127 @@
+{
+  "restaurantName": "Cafe Sunrise",
+  "logo": "/logo.png",
+  "address": "123 Main Street, Downtown",
+  "phone": "+91 98765 43210",
+  "email": "contact@cafesunrise.com",
+  "language": "en",
+  "currency": "₹",
+  "gstRate": 5,
+  "theme": "auto",
+  "menu": [
+    {
+      "id": 1,
+      "name": "Masala Tea",
+      "category": "Beverages",
+      "price": 15,
+      "description": "Aromatic spiced tea with milk",
+      "available": true,
+      "veg": true,
+      "image": "/assets/tea.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Special Veg Thali",
+      "category": "Meals",
+      "price": 120,
+      "description": "Complete meal with dal, sabzi, roti, rice, and dessert",
+      "available": true,
+      "veg": true,
+      "image": "/assets/thali.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Paneer Butter Masala",
+      "category": "Main Course",
+      "price": 180,
+      "description": "Creamy tomato-based curry with cottage cheese",
+      "available": true,
+      "veg": true,
+      "image": "/assets/paneer.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Cold Coffee",
+      "category": "Beverages",
+      "price": 45,
+      "description": "Refreshing iced coffee with cream",
+      "available": true,
+      "veg": true,
+      "image": "/assets/cold-coffee.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Samosa",
+      "category": "Snacks",
+      "price": 25,
+      "description": "Crispy triangular pastry with spiced filling",
+      "available": true,
+      "veg": true,
+      "image": "/assets/samosa.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Gulab Jamun",
+      "category": "Desserts",
+      "price": 35,
+      "description": "Sweet milk dumplings in sugar syrup",
+      "available": true,
+      "veg": true,
+      "image": "/assets/gulab-jamun.jpg"
+    }
+  ],
+  "categories": [
+    { "id": "beverages", "name": "Beverages", "icon": "☕", "order": 1 },
+    { "id": "snacks", "name": "Snacks", "icon": "🥪", "order": 2 },
+    { "id": "main-course", "name": "Main Course", "icon": "🍛", "order": 3 },
+    { "id": "meals", "name": "Meals", "icon": "🍽️", "order": 4 },
+    { "id": "desserts", "name": "Desserts", "icon": "🍰", "order": 5 }
+  ],
+  "staff": [
+    { "id": 1, "name": "Ravi Kumar", "role": "waiter", "pin": "1234", "active": true },
+    { "id": 2, "name": "Neha Sharma", "role": "manager", "pin": "5678", "active": true },
+    { "id": 3, "name": "Amit Singh", "role": "cook", "pin": "9012", "active": true }
+  ],
+  "tables": [
+    { "id": 1, "name": "T1", "capacity": 2, "floor": "Ground", "status": "available" },
+    { "id": 2, "name": "T2", "capacity": 4, "floor": "Ground", "status": "available" },
+    { "id": 3, "name": "T3", "capacity": 6, "floor": "Ground", "status": "occupied" },
+    { "id": 4, "name": "T4", "capacity": 2, "floor": "First", "status": "available" },
+    { "id": 5, "name": "T5", "capacity": 4, "floor": "First", "status": "reserved" },
+    { "id": 6, "name": "T6", "capacity": 8, "floor": "First", "status": "cleaning" }
+  ],
+  "features": {
+    "inventory": true,
+    "printerSupport": true,
+    "guestMode": false,
+    "multiLanguage": true,
+    "tableManagement": true,
+    "qrMenu": true,
+    "loyaltyProgram": false,
+    "deliveryIntegration": false,
+    "analyticsReports": true
+  },
+  "shortcuts": [
+    { "name": "Tea x2", "items": [{ "id": 1, "quantity": 2 }] },
+    { "name": "Thali Combo", "items": [{ "id": 2, "quantity": 1 }, { "id": 1, "quantity": 1 }] },
+    { "name": "Snack Set", "items": [{ "id": 5, "quantity": 2 }, { "id": 4, "quantity": 1 }] }
+  ],
+  "settings": {
+    "autoCalculateTax": true,
+    "defaultPaymentMethod": "cash",
+    "printBillAutomatically": false,
+    "soundNotifications": true,
+    "roundOffBills": true,
+    "showItemImages": true,
+    "compactMode": false,
+    "greeting": "Thank you for visiting Cafe Sunrise!",
+    "footer": "Visit us again soon!"
+  },
+  "inventory": [
+    { "itemId": 1, "stockLevel": 100, "minStock": 20, "unit": "cups" },
+    { "itemId": 2, "stockLevel": 25, "minStock": 5, "unit": "plates" },
+    { "itemId": 3, "stockLevel": 15, "minStock": 3, "unit": "portions" }
+  ],
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-20T10:30:00Z"
+}
