@@ -6,11 +6,14 @@ import { Sidebar } from '@/components/common/Sidebar';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import RecentOrders from '@/components/dashboard/RecentOrders';
 import TopSellingItems from '@/components/dashboard/TopSellingItems';
+import { getLocalizedText } from '@/lib/helpers';
 
 export const Dashboard = () => {
   const { config, orders, menuItems } = useRestaurant();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
+  
+  const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
   if (!config) {
     return (
@@ -86,7 +89,7 @@ export const Dashboard = () => {
             <div>
               <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
               <p className="text-muted-foreground">
-                Welcome to {config.restaurantName} management system
+                Welcome to {restaurantName} management system
               </p>
             </div>
             

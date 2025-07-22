@@ -4,6 +4,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Sun, Moon, Menu } from 'lucide-react';
 import { RestaurantConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
+import { getLocalizedText } from '@/lib/helpers';
 
 interface TopBarProps {
   config: RestaurantConfig;
@@ -19,6 +20,8 @@ export const TopBar = ({
   userRole
 }: TopBarProps) => {
   const { theme, setTheme, isDarkMode } = useTheme();
+  
+  const restaurantName = getLocalizedText(config.restaurantName, config.language || 'en');
   
   const toggleTheme = () => {
     setTheme(isDarkMode ? 'light' : 'dark');
@@ -41,21 +44,21 @@ export const TopBar = ({
           )}
           
           <div className="flex items-center gap-2">
-            {config.logo ? (
-              <img 
-                src={config.logo} 
-                alt={config.restaurantName} 
-                className="h-8 w-8 object-contain"
-              />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow">
-                <span className="text-sm font-bold text-primary-foreground">
-                  {config.restaurantName.charAt(0)}
-                </span>
-              </div>
-            )}
-            
-            <h1 className="text-lg font-bold">{config.restaurantName}</h1>
+             {config.logo ? (
+               <img 
+                 src={config.logo} 
+                 alt={restaurantName} 
+                 className="h-8 w-8 object-contain"
+               />
+             ) : (
+               <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow">
+                 <span className="text-sm font-bold text-primary-foreground">
+                   {restaurantName.charAt(0)}
+                 </span>
+               </div>
+             )}
+             
+             <h1 className="text-lg font-bold">{restaurantName}</h1>
           </div>
         </div>
         

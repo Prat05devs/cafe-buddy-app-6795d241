@@ -12,6 +12,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { RestaurantConfig } from '@/lib/config';
+import { getLocalizedText } from '@/lib/helpers';
 
 interface SidebarProps {
   config: RestaurantConfig;
@@ -35,6 +36,7 @@ export const Sidebar = ({
   collapsed = false,
   onToggleCollapse
 }: SidebarProps) => {
+  const restaurantName = getLocalizedText(config.restaurantName, config.language || 'en');
   // Define navigation items based on config features
   const navItems: NavItem[] = [
     { 
@@ -88,7 +90,7 @@ export const Sidebar = ({
     >
       <div className="flex items-center justify-between p-4 border-b border-glass-border">
         {!collapsed && (
-          <h2 className="text-lg font-bold">{config.restaurantName}</h2>
+          <h2 className="text-lg font-bold">{restaurantName}</h2>
         )}
         
         {onToggleCollapse && (

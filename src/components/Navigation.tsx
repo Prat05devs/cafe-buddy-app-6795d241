@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RestaurantConfig } from '@/lib/config';
+import { getLocalizedText } from '@/lib/helpers';
 
 interface NavigationProps {
   currentView: string;
@@ -81,6 +82,8 @@ export const TopBar: React.FC<{
   currentUser: string;
   userRole: string;
 }> = ({ config, currentUser, userRole }) => {
+  const restaurantName = getLocalizedText(config.restaurantName, config.language || 'en');
+  
   return (
     <div className="bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-4 shadow-medium mb-6">
       <div className="flex items-center justify-between">
@@ -89,7 +92,7 @@ export const TopBar: React.FC<{
             <UtensilsCrossed className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{config.restaurantName}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{restaurantName}</h1>
             <p className="text-muted-foreground">
               {new Date().toLocaleDateString(config.language === 'en' ? 'en-US' : 'hi-IN', { 
                 weekday: 'long', 
