@@ -134,8 +134,7 @@ export const RestaurantApp: React.FC = () => {
     switch (currentView) {
       case 'dashboard':
         return (
-          <Dashboard
-            stats={dashboardStats}
+          <Dashboard />
             recentOrders={orders.slice(0, 5)}
             onViewOrders={() => setCurrentView('orders')}
           />
