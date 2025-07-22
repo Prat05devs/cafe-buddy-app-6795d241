@@ -5,15 +5,22 @@ import { Dashboard } from './Dashboard';
 import { MenuManagement } from './MenuManagement';
 import OrderManagement from './OrderManagement';
 import TableManagement from './TableManagement';
+import { OrderCreation } from './OrderCreation';
+import { TableOrderDetails } from './TableOrderDetails';
+import { Settings } from './Settings';
 import { useRestaurantData } from '@/hooks/useRestaurantData';
 import { useToast } from '@/hooks/use-toast';
-import { MenuItem, Order, Table } from '@/types/restaurant';
+import { MenuItem, Order, Table, OrderItem } from '@/types/restaurant';
 import { RestaurantConfig } from '@/lib/config';
 
 type ViewType = 'dashboard' | 'menu' | 'orders' | 'tables' | 'reports' | 'settings';
 
 export const RestaurantApp: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  const [language, setLanguage] = useState<string>('en');
+  const [isOrderCreationOpen, setIsOrderCreationOpen] = useState(false);
+  const [isTableDetailsOpen, setIsTableDetailsOpen] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const { toast } = useToast();
   
   const {
@@ -185,18 +192,14 @@ export const RestaurantApp: React.FC = () => {
 
   // Table Management Handlers
   const handleSelectTable = (table: Table) => {
-    toast({
-      title: "Table Selected",
-      description: `Selected table ${table.number}`,
-    });
+    setSelectedTable(table);
+    setIsTableDetailsOpen(true);
   };
 
   const handleAddTableOrder = (tableId: string) => {
-    updateTableStatus(tableId, 'occupied');
-    toast({
-      title: "New Order",
-      description: "Order creation form would open here",
-    });
+    const table = tables.find(t => t.id === tableId);
+    setSelectedTable(table || null);
+    setIsOrderCreationOpen(true);
   };
 
   const handleCleanTable = (tableId: string) => {
@@ -204,16 +207,66 @@ export const RestaurantApp: React.FC = () => {
     const newStatus = table?.status === 'cleaning' ? 'available' : 'cleaning';
     updateTableStatus(tableId, newStatus);
     toast({
-      title: newStatus === 'cleaning' ? 'Cleaning Started' : 'Table Ready',
-      description: `Table ${table?.number} ${newStatus === 'cleaning' ? 'is being cleaned' : 'is now available'}`,
+      title: newStatus === 'cleaning' ? (language === 'hi' ? 'सफाई शुरू की गई' : 'Cleaning Started') : (language === 'hi' ? 'टेबल तैयार' : 'Table Ready'),
+      description: `${language === 'hi' ? 'टेबल' : 'Table'} ${table?.number} ${newStatus === 'cleaning' ? (language === 'hi' ? 'साफ की जा रही है' : 'is being cleaned') : (language === 'hi' ? 'अब उपलब्ध है' : 'is now available')}`,
     });
   };
 
   const handleViewTableOrders = (tableId: string) => {
     const table = tables.find(t => t.id === tableId);
+    setSelectedTable(table || null);
+    setIsTableDetailsOpen(true);
+  };
+
+  // Order Creation Handler
+  const handleCreateOrder = (orderData: {
+    tableId?: string;
+    type: 'dine-in' | 'takeaway' | 'delivery';
+    items: OrderItem[];
+    customerName?: string;
+    customerPhone?: string;
+  }) => {
+    const newOrder = {
+      ...orderData,
+      status: 'pending' as const,
+      subtotal: orderData.items.reduce((sum, item) => sum + item.totalPrice, 0),
+      tax: 0,
+      discount: 0,
+      total: orderData.items.reduce((sum, item) => sum + item.totalPrice, 0),
+      paymentStatus: 'pending' as const,
+    };
+
+    // Calculate tax if enabled
+    if (restaurantConfig.settings?.autoCalculateTax) {
+      newOrder.tax = (newOrder.subtotal * restaurantConfig.gstRate) / 100;
+      newOrder.total = newOrder.subtotal + newOrder.tax;
+    }
+
+    addOrder(newOrder);
+
+    // Update table status if it's a dine-in order
+    if (orderData.tableId && orderData.type === 'dine-in') {
+      updateTableStatus(orderData.tableId, 'occupied');
+    }
+
     toast({
-      title: "Table Orders",
-      description: `Viewing orders for table ${table?.number}`,
+      title: language === 'hi' ? 'ऑर्डर बनाया गया' : 'Order Created',
+      description: language === 'hi' ? 'नया ऑर्डर सफलतापूर्वक बनाया गया' : 'New order created successfully',
+    });
+
+    setIsOrderCreationOpen(false);
+  };
+
+  // Language change handler
+  const handleLanguageChange = (newLanguage: string) => {
+    setLanguage(newLanguage);
+  };
+
+  // Settings update handler
+  const handleSettingsUpdate = (settings: Partial<RestaurantConfig>) => {
+    toast({
+      title: language === 'hi' ? 'सेटिंग्स अपडेट हुईं' : 'Settings Updated',
+      description: language === 'hi' ? 'सेटिंग्स सफलतापूर्वक अपडेट हो गईं' : 'Settings updated successfully',
     });
   };
 
@@ -224,14 +277,25 @@ export const RestaurantApp: React.FC = () => {
       
       case 'menu':
         return (
-          <MenuManagement
-            items={menuItems}
-            categories={categories}
-            onAddItem={handleAddMenuItem}
-            onEditItem={handleEditMenuItem}
-            onDeleteItem={handleDeleteMenuItem}
-            onToggleAvailability={handleToggleItemAvailability}
-          />
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">{language === 'hi' ? 'मेन्यू प्रबंधन' : 'Menu Management'}</h2>
+              <button
+                onClick={() => setIsOrderCreationOpen(true)}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                {language === 'hi' ? 'त्वरित ऑर्डर' : 'Quick Order'}
+              </button>
+            </div>
+            <MenuManagement
+              items={menuItems}
+              categories={categories}
+              onAddItem={handleAddMenuItem}
+              onEditItem={handleEditMenuItem}
+              onDeleteItem={handleDeleteMenuItem}
+              onToggleAvailability={handleToggleItemAvailability}
+            />
+          </div>
         );
       
       case 'orders':
@@ -267,10 +331,11 @@ export const RestaurantApp: React.FC = () => {
       
       case 'settings':
         return (
-          <div className="bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-12 text-center">
-            <h3 className="text-lg font-semibold mb-2">Settings</h3>
-            <p className="text-muted-foreground">Coming soon - restaurant settings and configuration</p>
-          </div>
+          <Settings
+            config={restaurantConfig}
+            onLanguageChange={handleLanguageChange}
+            onSettingsUpdate={handleSettingsUpdate}
+          />
         );
       
       default:
@@ -296,6 +361,35 @@ export const RestaurantApp: React.FC = () => {
         <main className="pb-6">
           {renderCurrentView()}
         </main>
+
+        {/* Order Creation Modal */}
+        <OrderCreation
+          isOpen={isOrderCreationOpen}
+          onClose={() => {
+            setIsOrderCreationOpen(false);
+            setSelectedTable(null);
+          }}
+          onSubmit={handleCreateOrder}
+          menuItems={menuItems}
+          categories={categories}
+          tables={tables}
+          selectedTable={selectedTable}
+          language={language}
+        />
+
+        {/* Table Order Details Modal */}
+        <TableOrderDetails
+          isOpen={isTableDetailsOpen}
+          onClose={() => {
+            setIsTableDetailsOpen(false);
+            setSelectedTable(null);
+          }}
+          table={selectedTable}
+          orders={orders}
+          language={language}
+          onUpdateOrderStatus={handleUpdateOrderStatus}
+          onAddOrder={handleAddTableOrder}
+        />
       </div>
     </div>
   );
