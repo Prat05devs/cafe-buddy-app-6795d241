@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Navigation, TopBar } from './Navigation';
+import { Navigation } from './Navigation';
+import { TopBar } from './common/TopBar';
 import { Dashboard } from './Dashboard';
 import { MenuManagement } from './MenuManagement';
 import OrderManagement from './OrderManagement';
@@ -7,6 +8,7 @@ import TableManagement from './TableManagement';
 import { useRestaurantData } from '@/hooks/useRestaurantData';
 import { useToast } from '@/hooks/use-toast';
 import { MenuItem, Order, Table } from '@/types/restaurant';
+import { RestaurantConfig } from '@/lib/config';
 
 type ViewType = 'dashboard' | 'menu' | 'orders' | 'tables' | 'reports' | 'settings';
 
@@ -30,6 +32,76 @@ export const RestaurantApp: React.FC = () => {
     addOrder,
     updateTableStatus,
   } = useRestaurantData();
+
+  // Create a RestaurantConfig object from the restaurant data
+  const restaurantConfig: RestaurantConfig = {
+    restaurantName: restaurant.name,
+    logo: '',
+    address: restaurant.address,
+    phone: restaurant.phone,
+    email: restaurant.email,
+    language: restaurant.settings.language,
+    currency: restaurant.currency,
+    gstRate: restaurant.taxRate,
+    theme: restaurant.settings.theme as 'light' | 'dark' | 'auto',
+    menu: menuItems.map(item => ({
+      id: parseInt(item.id),
+      name: item.name,
+      category: item.category,
+      price: item.price,
+      description: item.description,
+      available: item.available,
+      veg: true,
+    })),
+    categories: categories.map(cat => ({
+      id: cat.id,
+      name: cat.name,
+      icon: cat.icon || '🍽️',
+      order: cat.displayOrder,
+    })),
+    staff: [
+      {
+        id: 1,
+        name: 'Jordan Smith',
+        role: 'manager',
+        pin: '1234',
+        active: true,
+      }
+    ],
+    tables: tables.map(table => ({
+      id: parseInt(table.id.replace('table-', '')),
+      name: table.number,
+      capacity: table.capacity,
+      floor: table.floor,
+      status: table.status,
+    })),
+    features: {
+      inventory: restaurant.settings.enableInventory,
+      tableManagement: restaurant.settings.enableTableManagement,
+      printerSupport: false,
+      guestMode: false,
+      multiLanguage: false,
+      qrMenu: false,
+      loyaltyProgram: false,
+      deliveryIntegration: false,
+      analyticsReports: true,
+    },
+    shortcuts: [],
+    settings: {
+      autoCalculateTax: restaurant.settings.autoCalculateTax,
+      defaultPaymentMethod: restaurant.settings.defaultPaymentMethod,
+      printBillAutomatically: false,
+      soundNotifications: false,
+      roundOffBills: true,
+      showItemImages: true,
+      compactMode: false,
+      greeting: 'Welcome to ' + restaurant.name,
+      footer: 'Thank you for your visit!',
+    },
+    inventory: [],
+    version: '1.0.0',
+    lastUpdated: new Date().toISOString(),
+  };
 
   // Menu Management Handlers
   const handleAddMenuItem = () => {
@@ -133,12 +205,7 @@ export const RestaurantApp: React.FC = () => {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'dashboard':
-        return (
-          <Dashboard />
-            recentOrders={orders.slice(0, 5)}
-            onViewOrders={() => setCurrentView('orders')}
-          />
-        );
+        return <Dashboard />;
       
       case 'menu':
         return (
@@ -192,7 +259,7 @@ export const RestaurantApp: React.FC = () => {
         );
       
       default:
-        return <Dashboard stats={dashboardStats} recentOrders={orders.slice(0, 5)} onViewOrders={() => setCurrentView('orders')} />;
+        return <Dashboard />;
     }
   };
 
@@ -200,8 +267,9 @@ export const RestaurantApp: React.FC = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 space-y-6">
         <TopBar
-          restaurantName={restaurant.name}
+          config={restaurantConfig}
           currentUser="Jordan Smith"
+          userRole="Manager"
         />
         
         <Navigation
