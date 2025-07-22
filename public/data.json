@@ -5,123 +5,977 @@
   "phone": "+91 98765 43210",
   "email": "contact@cafesunrise.com",
   "language": "en",
+  "supportedLanguages": ["en", "hi", "ta", "gu"],
+  "languageLabels": {
+    "en": "English",
+    "hi": "हिंदी",
+    "ta": "தமிழ்",
+    "gu": "ગુજરાતી"
+  },
   "currency": "₹",
-  "gstRate": 5,
+  "gstRate": 18,
+  "cgstRate": 9,
+  "sgstRate": 9,
   "theme": "auto",
+  "owner": {
+    "name": "Rajesh Patel",
+    "email": "rajesh@cafesunrise.com",
+    "phone": "+91 98765 43210",
+    "password": "hashed_password_would_be_here",
+    "role": "owner"
+  },
   "menu": [
     {
       "id": 1,
-      "name": "Masala Tea",
+      "name": {
+        "en": "Masala Tea",
+        "hi": "मसाला चाय",
+        "ta": "மசாலா தேநீர்",
+        "gu": "મસાલા ચા"
+      },
       "category": "Beverages",
       "price": 15,
-      "description": "Aromatic spiced tea with milk",
+      "description": {
+        "en": "Aromatic spiced tea with milk",
+        "hi": "दूध के साथ सुगंधित मसालेदार चाय",
+        "ta": "பால் கொண்ட மணமுள்ள மசாலா தேநீர்",
+        "gu": "દૂધ સાથે સુગંધિત મસાલાવાળી ચા"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/tea.jpg"
+      "image": "/assets/tea.jpg",
+      "ingredients": ["Tea leaves", "Milk", "Sugar", "Cardamom", "Ginger"],
+      "allergens": ["Milk"],
+      "costPrice": 7,
+      "createdAt": "2023-11-10T08:30:00Z",
+      "updatedAt": "2023-12-15T10:15:00Z"
     },
     {
       "id": 2,
-      "name": "Special Veg Thali",
+      "name": {
+        "en": "Special Veg Thali",
+        "hi": "स्पेशल वेज थाली",
+        "ta": "சிறப்பு சைவ தாளி",
+        "gu": "સ્પેશલ વેજ થાળી"
+      },
       "category": "Meals",
       "price": 120,
-      "description": "Complete meal with dal, sabzi, roti, rice, and dessert",
+      "description": {
+        "en": "Complete meal with dal, sabzi, roti, rice, and dessert",
+        "hi": "दाल, सब्जी, रोटी, चावल और मिठाई के साथ पूर्ण भोजन",
+        "ta": "தால், காய்கறி, ரொட்டி, சாதம் மற்றும் இனிப்புடன் முழு உணவு",
+        "gu": "દાળ, શાકભાજી, રોટી, ભાત અને મીઠાઈ સાથે સંપૂર્ણ ભોજન"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/thali.jpg"
+      "image": "/assets/thali.jpg",
+      "ingredients": ["Rice", "Wheat flour", "Mixed vegetables", "Lentils", "Spices", "Ghee", "Sugar"],
+      "allergens": ["Wheat", "Milk"],
+      "costPrice": 65,
+      "createdAt": "2023-10-05T09:45:00Z",
+      "updatedAt": "2024-01-12T14:20:00Z"
     },
     {
       "id": 3,
-      "name": "Paneer Butter Masala",
+      "name": {
+        "en": "Paneer Butter Masala",
+        "hi": "पनीर बटर मसाला",
+        "ta": "பன்னீர் பட்டர் மசாலா",
+        "gu": "પનીર બટર મસાલા"
+      },
       "category": "Main Course",
       "price": 180,
-      "description": "Creamy tomato-based curry with cottage cheese",
+      "description": {
+        "en": "Creamy tomato-based curry with cottage cheese",
+        "hi": "पनीर के साथ क्रीमी टमाटर आधारित करी",
+        "ta": "பன்னீர் கொண்ட கிரீமி தக்காளி அடிப்படையிலான கறி",
+        "gu": "પનીર સાથે ક્રીમી ટમેટા આધારિત કરી"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/paneer.jpg"
+      "image": "/assets/paneer.jpg",
+      "ingredients": ["Paneer", "Tomatoes", "Onions", "Butter", "Cream", "Spices"],
+      "allergens": ["Milk"],
+      "costPrice": 95,
+      "createdAt": "2023-09-20T11:30:00Z",
+      "updatedAt": "2024-01-05T16:45:00Z"
     },
     {
       "id": 4,
-      "name": "Cold Coffee",
+      "name": {
+        "en": "Cold Coffee",
+        "hi": "कोल्ड कॉफी",
+        "ta": "குளிர் காபி",
+        "gu": "કોલ્ડ કોફી"
+      },
       "category": "Beverages",
       "price": 45,
-      "description": "Refreshing iced coffee with cream",
+      "description": {
+        "en": "Refreshing iced coffee with cream",
+        "hi": "क्रीम के साथ ताज़गीदायक आइस्ड कॉफी",
+        "ta": "கிரீம் கொண்ட புத்துணர்ச்சியூட்டும் ஐஸ் காபி",
+        "gu": "ક્રીમ સાથે તાજગીભર્યું આઇસ્ડ કોફી"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/cold-coffee.jpg"
+      "image": "/assets/cold-coffee.jpg",
+      "ingredients": ["Coffee", "Milk", "Sugar", "Ice cream"],
+      "allergens": ["Milk"],
+      "costPrice": 22,
+      "createdAt": "2023-11-25T13:20:00Z",
+      "updatedAt": "2024-02-10T09:30:00Z"
     },
     {
       "id": 5,
-      "name": "Samosa",
+      "name": {
+        "en": "Samosa",
+        "hi": "समोसा",
+        "ta": "சமோசா",
+        "gu": "સમોસા"
+      },
       "category": "Snacks",
       "price": 25,
-      "description": "Crispy triangular pastry with spiced filling",
+      "description": {
+        "en": "Crispy triangular pastry with spiced filling",
+        "hi": "मसालेदार भरावन के साथ कुरकुरे त्रिकोणीय पेस्ट्री",
+        "ta": "மசாலா நிரப்பப்பட்ட கிரிஸ்பி முக்கோண பேஸ்ட்ரி",
+        "gu": "મસાલેદાર ભરેલી કુરકુરી ત્રિકોણ પેસ્ટ્રી"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/samosa.jpg"
+      "image": "/assets/samosa.jpg",
+      "ingredients": ["Flour", "Potatoes", "Peas", "Spices", "Oil"],
+      "allergens": ["Wheat"],
+      "costPrice": 12,
+      "createdAt": "2023-08-15T10:10:00Z",
+      "updatedAt": "2023-12-20T11:50:00Z"
     },
     {
       "id": 6,
-      "name": "Gulab Jamun",
+      "name": {
+        "en": "Gulab Jamun",
+        "hi": "गुलाब जामुन",
+        "ta": "குலாப் ஜாமுன்",
+        "gu": "ગુલાબ જામુન"
+      },
       "category": "Desserts",
       "price": 35,
-      "description": "Sweet milk dumplings in sugar syrup",
+      "description": {
+        "en": "Sweet milk dumplings in sugar syrup",
+        "hi": "चीनी की चाशनी में मीठे दूध के गोले",
+        "ta": "சர்க்கரை சிரப்பில் இனிப்பு பால் உருண்டைகள்",
+        "gu": "ખાંડની ચાસણીમાં મીઠા દૂધના લાડુ"
+      },
       "available": true,
       "veg": true,
-      "image": "/assets/gulab-jamun.jpg"
+      "image": "/assets/gulab-jamun.jpg",
+      "ingredients": ["Milk powder", "Flour", "Sugar", "Cardamom", "Rose water"],
+      "allergens": ["Milk", "Wheat"],
+      "costPrice": 18,
+      "createdAt": "2023-10-30T15:45:00Z",
+      "updatedAt": "2024-01-25T12:30:00Z"
+    },
+    {
+      "id": 7,
+      "name": {
+        "en": "Chicken Biryani",
+        "hi": "चिकन बिरयानी",
+        "ta": "சிக்கன் பிரியாணி",
+        "gu": "ચિકન બિરયાની"
+      },
+      "category": "Main Course",
+      "price": 220,
+      "description": {
+        "en": "Aromatic rice dish cooked with chicken and spices",
+        "hi": "चिकन और मसालों के साथ पकाया गया सुगंधित चावल का व्यंजन",
+        "ta": "கோழி மற்றும் மசாலாக்களுடன் சமைக்கப்பட்ட மணமுள்ள அரிசி உணவு",
+        "gu": "ચિકન અને મસાલા સાથે રાંધેલો સુગંધિત ચોખાનો વાનગી"
+      },
+      "available": true,
+      "veg": false,
+      "image": "/assets/biryani.jpg",
+      "ingredients": ["Basmati rice", "Chicken", "Onions", "Yogurt", "Spices", "Ghee"],
+      "allergens": ["Milk"],
+      "costPrice": 120,
+      "createdAt": "2023-11-05T12:30:00Z",
+      "updatedAt": "2024-02-15T14:45:00Z"
+    },
+    {
+      "id": 8,
+      "name": {
+        "en": "Butter Naan",
+        "hi": "बटर नान",
+        "ta": "பட்டர் நான்",
+        "gu": "બટર નાન"
+      },
+      "category": "Breads",
+      "price": 35,
+      "description": {
+        "en": "Soft Indian bread baked in tandoor and brushed with butter",
+        "hi": "तंदूर में पकाया और मक्खन से ब्रश किया गया नरम भारतीय रोटी",
+        "ta": "தண்டூரில் சுட்டு வெண்ணெய் தடவப்பட்ட மென்மையான இந்திய ரொட்டி",
+        "gu": "તંદૂરમાં બેક કરેલી અને માખણથી બ્રશ કરેલી નરમ ભારતીય રોટી"
+      },
+      "available": true,
+      "veg": true,
+      "image": "/assets/naan.jpg",
+      "ingredients": ["Refined flour", "Yeast", "Butter", "Milk"],
+      "allergens": ["Wheat", "Milk"],
+      "costPrice": 15,
+      "createdAt": "2023-12-01T09:15:00Z",
+      "updatedAt": "2024-02-20T11:30:00Z"
+    },
+    {
+      "id": 9,
+      "name": {
+        "en": "Vegetable Fried Rice",
+        "hi": "वेजिटेबल फ्राइड राइस",
+        "ta": "காய்கறி ஃபிரைடு ரைஸ்",
+        "gu": "વેજીટેબલ ફ્રાઇડ રાઇસ"
+      },
+      "category": "Main Course",
+      "price": 140,
+      "description": {
+        "en": "Rice stir-fried with mixed vegetables and soy sauce",
+        "hi": "मिश्रित सब्जियों और सोया सॉस के साथ भूना हुआ चावल",
+        "ta": "கலந்த காய்கறிகள் மற்றும் சோயா சாஸுடன் வறுக்கப்பட்ட அரிசி",
+        "gu": "મિશ્ર શાકભાજી અને સોયા સોસ સાથે સાંતળેલા ચોખા"
+      },
+      "available": true,
+      "veg": true,
+      "image": "/assets/fried-rice.jpg",
+      "ingredients": ["Rice", "Mixed vegetables", "Soy sauce", "Oil", "Spices"],
+      "allergens": ["Soy"],
+      "costPrice": 75,
+      "createdAt": "2023-10-15T14:20:00Z",
+      "updatedAt": "2024-01-30T10:45:00Z"
+    },
+    {
+      "id": 10,
+      "name": {
+        "en": "Masala Dosa",
+        "hi": "मसाला डोसा",
+        "ta": "மசாலா தோசை",
+        "gu": "મસાલા ડોસા"
+      },
+      "category": "Breakfast",
+      "price": 90,
+      "description": {
+        "en": "Crispy rice pancake filled with spiced potato filling",
+        "hi": "मसालेदार आलू की भरावन के साथ कुरकुरा चावल का पैनकेक",
+        "ta": "மசாலா உருளைக்கிழங்கு நிரப்பப்பட்ட கிரிஸ்பி அரிசி தோசை",
+        "gu": "મસાલેદાર બટાટાની ભરેલી કુરકુરી ચોખાની પેનકેક"
+      },
+      "available": true,
+      "veg": true,
+      "image": "/assets/dosa.jpg",
+      "ingredients": ["Rice", "Urad dal", "Potatoes", "Onions", "Spices"],
+      "allergens": [],
+      "costPrice": 45,
+      "createdAt": "2023-09-10T08:30:00Z",
+      "updatedAt": "2024-02-05T09:15:00Z"
+    },
+    {
+      "id": 11,
+      "name": {
+        "en": "Chocolate Brownie",
+        "hi": "चॉकलेट ब्राउनी",
+        "ta": "சாக்லேட் பிரௌனி",
+        "gu": "ચોકલેટ બ્રાઉની"
+      },
+      "category": "Desserts",
+      "price": 80,
+      "description": {
+        "en": "Rich chocolate brownie served with vanilla ice cream",
+        "hi": "वेनिला आइसक्रीम के साथ परोसी गई समृद्ध चॉकलेट ब्राउनी",
+        "ta": "வனிலா ஐஸ்க்ரீமுடன் பரிமாறப்படும் ருசியான சாக்லேட் பிரௌனி",
+        "gu": "વેનિલા આઇસક્રીમ સાથે પીરસવામાં આવતી સમૃદ્ધ ચોકલેટ બ્રાઉની"
+      },
+      "available": true,
+      "veg": true,
+      "image": "/assets/brownie.jpg",
+      "ingredients": ["Flour", "Chocolate", "Butter", "Sugar", "Eggs"],
+      "allergens": ["Wheat", "Milk", "Eggs"],
+      "costPrice": 40,
+      "createdAt": "2023-12-10T13:45:00Z",
+      "updatedAt": "2024-02-25T16:20:00Z"
+    },
+    {
+      "id": 12,
+      "name": {
+        "en": "Fresh Lime Soda",
+        "hi": "फ्रेश लाइम सोडा",
+        "ta": "புதிய எலுமிச்சை சோடா",
+        "gu": "ફ્રેશ લાઈમ સોડા"
+      },
+      "category": "Beverages",
+      "price": 40,
+      "description": {
+        "en": "Refreshing lime soda, sweet or salted as per choice",
+        "hi": "ताज़गीदायक नींबू सोडा, पसंद के अनुसार मीठा या नमकीन",
+        "ta": "விருப்பப்படி இனிப்பு அல்லது உப்பு சேர்க்கப்பட்ட புத்துணர்ச்சியான எலுமிச்சை சோடா",
+        "gu": "પસંદગી અનુસાર મીઠું અથવા ખારું તાજગીભર્યું લાઈમ સોડા"
+      },
+      "available": true,
+      "veg": true,
+      "image": "/assets/lime-soda.jpg",
+      "ingredients": ["Lime", "Sugar/Salt", "Soda water", "Mint leaves"],
+      "allergens": [],
+      "costPrice": 15,
+      "createdAt": "2023-11-15T10:30:00Z",
+      "updatedAt": "2024-01-18T11:40:00Z"
     }
   ],
   "categories": [
-    { "id": "beverages", "name": "Beverages", "icon": "☕", "order": 1 },
-    { "id": "snacks", "name": "Snacks", "icon": "🥪", "order": 2 },
-    { "id": "main-course", "name": "Main Course", "icon": "🍛", "order": 3 },
-    { "id": "meals", "name": "Meals", "icon": "🍽️", "order": 4 },
-    { "id": "desserts", "name": "Desserts", "icon": "🍰", "order": 5 }
+    { 
+      "id": "beverages", 
+      "name": { "en": "Beverages", "hi": "पेय पदार्थ", "ta": "பானங்கள்", "gu": "પીણાં" }, 
+      "icon": "☕", 
+      "order": 1,
+      "active": true,
+      "createdAt": "2023-08-01T10:00:00Z",
+      "updatedAt": "2023-08-01T10:00:00Z"
+    },
+    { 
+      "id": "snacks", 
+      "name": { "en": "Snacks", "hi": "नाश्ता", "ta": "சிற்றுண்டி", "gu": "નાસ્તો" }, 
+      "icon": "🥪", 
+      "order": 2,
+      "active": true,
+      "createdAt": "2023-08-01T10:05:00Z",
+      "updatedAt": "2023-08-01T10:05:00Z"
+    },
+    { 
+      "id": "breakfast", 
+      "name": { "en": "Breakfast", "hi": "नाश्ता", "ta": "காலை உணவு", "gu": "નાસ્તો" }, 
+      "icon": "🍳", 
+      "order": 3,
+      "active": true,
+      "createdAt": "2023-08-01T10:10:00Z",
+      "updatedAt": "2023-08-01T10:10:00Z"
+    },
+    { 
+      "id": "main-course", 
+      "name": { "en": "Main Course", "hi": "मुख्य भोजन", "ta": "முக்கிய உணவு", "gu": "મુખ્ય ભોજન" }, 
+      "icon": "🍛", 
+      "order": 4,
+      "active": true,
+      "createdAt": "2023-08-01T10:15:00Z",
+      "updatedAt": "2023-08-01T10:15:00Z"
+    },
+    { 
+      "id": "breads", 
+      "name": { "en": "Breads", "hi": "रोटी", "ta": "ரொட்டி", "gu": "રોટલી" }, 
+      "icon": "🍞", 
+      "order": 5,
+      "active": true,
+      "createdAt": "2023-08-01T10:20:00Z",
+      "updatedAt": "2023-08-01T10:20:00Z"
+    },
+    { 
+      "id": "meals", 
+      "name": { "en": "Meals", "hi": "भोजन", "ta": "உணவு", "gu": "ભોજન" }, 
+      "icon": "🍽️", 
+      "order": 6,
+      "active": true,
+      "createdAt": "2023-08-01T10:25:00Z",
+      "updatedAt": "2023-08-01T10:25:00Z"
+    },
+    { 
+      "id": "desserts", 
+      "name": { "en": "Desserts", "hi": "मिठाई", "ta": "இனிப்பு", "gu": "મીઠાઈ" }, 
+      "icon": "🍰", 
+      "order": 7,
+      "active": true,
+      "createdAt": "2023-08-01T10:30:00Z",
+      "updatedAt": "2023-08-01T10:30:00Z"
+    }
   ],
   "staff": [
-    { "id": 1, "name": "Ravi Kumar", "role": "waiter", "pin": "1234", "active": true },
-    { "id": 2, "name": "Neha Sharma", "role": "manager", "pin": "5678", "active": true },
-    { "id": 3, "name": "Amit Singh", "role": "cook", "pin": "9012", "active": true }
+    { 
+      "id": 1, 
+      "name": "Ravi Kumar", 
+      "role": "waiter", 
+      "pin": "1234", 
+      "email": "ravi@cafesunrise.com", 
+      "phone": "+91 93456 78901", 
+      "permissions": ["take_orders", "manage_tables", "process_payments"],
+      "active": true,
+      "createdAt": "2023-07-10T09:30:00Z",
+      "updatedAt": "2023-07-10T09:30:00Z"
+    },
+    { 
+      "id": 2, 
+      "name": "Neha Sharma", 
+      "role": "manager", 
+      "pin": "5678", 
+      "email": "neha@cafesunrise.com", 
+      "phone": "+91 94567 89012", 
+      "permissions": ["take_orders", "manage_tables", "process_payments", "manage_menu", "manage_staff", "view_reports"],
+      "active": true,
+      "createdAt": "2023-06-15T10:45:00Z",
+      "updatedAt": "2023-06-15T10:45:00Z"
+    },
+    { 
+      "id": 3, 
+      "name": "Amit Singh", 
+      "role": "kitchen", 
+      "pin": "9012", 
+      "email": "amit@cafesunrise.com", 
+      "phone": "+91 95678 90123", 
+      "permissions": ["view_orders", "update_order_status", "manage_inventory"],
+      "active": true,
+      "createdAt": "2023-08-05T11:15:00Z",
+      "updatedAt": "2023-08-05T11:15:00Z"
+    },
+    { 
+      "id": 4, 
+      "name": "Priya Patel", 
+      "role": "waiter", 
+      "pin": "3456", 
+      "email": "priya@cafesunrise.com", 
+      "phone": "+91 96789 01234", 
+      "permissions": ["take_orders", "manage_tables", "process_payments"],
+      "active": true,
+      "createdAt": "2023-09-20T14:30:00Z",
+      "updatedAt": "2023-09-20T14:30:00Z"
+    },
+    { 
+      "id": 5, 
+      "name": "Vijay Reddy", 
+      "role": "cashier", 
+      "pin": "7890", 
+      "email": "vijay@cafesunrise.com", 
+      "phone": "+91 97890 12345", 
+      "permissions": ["process_payments", "view_reports"],
+      "active": true,
+      "createdAt": "2023-10-12T13:20:00Z",
+      "updatedAt": "2023-10-12T13:20:00Z"
+    }
   ],
   "tables": [
-    { "id": 1, "name": "T1", "capacity": 2, "floor": "Ground", "status": "available" },
-    { "id": 2, "name": "T2", "capacity": 4, "floor": "Ground", "status": "available" },
-    { "id": 3, "name": "T3", "capacity": 6, "floor": "Ground", "status": "occupied" },
-    { "id": 4, "name": "T4", "capacity": 2, "floor": "First", "status": "available" },
-    { "id": 5, "name": "T5", "capacity": 4, "floor": "First", "status": "reserved" },
-    { "id": 6, "name": "T6", "capacity": 8, "floor": "First", "status": "cleaning" }
+    { 
+      "id": 1, 
+      "name": "T1", 
+      "capacity": 2, 
+      "floor": "Ground", 
+      "status": "available", 
+      "position": { "x": 100, "y": 100 },
+      "shape": "square",
+      "createdAt": "2023-06-01T09:00:00Z",
+      "updatedAt": "2023-06-01T09:00:00Z"
+    },
+    { 
+      "id": 2, 
+      "name": "T2", 
+      "capacity": 4, 
+      "floor": "Ground", 
+      "status": "available", 
+      "position": { "x": 250, "y": 100 },
+      "shape": "rectangle",
+      "createdAt": "2023-06-01T09:05:00Z",
+      "updatedAt": "2023-06-01T09:05:00Z"
+    },
+    { 
+      "id": 3, 
+      "name": "T3", 
+      "capacity": 6, 
+      "floor": "Ground", 
+      "status": "occupied", 
+      "position": { "x": 400, "y": 100 },
+      "shape": "round",
+      "createdAt": "2023-06-01T09:10:00Z",
+      "updatedAt": "2024-02-20T18:30:00Z"
+    },
+    { 
+      "id": 4, 
+      "name": "T4", 
+      "capacity": 2, 
+      "floor": "First", 
+      "status": "available", 
+      "position": { "x": 100, "y": 250 },
+      "shape": "square",
+      "createdAt": "2023-06-01T09:15:00Z",
+      "updatedAt": "2023-06-01T09:15:00Z"
+    },
+    { 
+      "id": 5, 
+      "name": "T5", 
+      "capacity": 4, 
+      "floor": "First", 
+      "status": "reserved", 
+      "position": { "x": 250, "y": 250 },
+      "reservedFor": "Rohit Sharma",
+      "reservationTime": "2024-07-22T19:30:00Z",
+      "shape": "rectangle",
+      "createdAt": "2023-06-01T09:20:00Z",
+      "updatedAt": "2024-07-21T14:15:00Z"
+    },
+    { 
+      "id": 6, 
+      "name": "T6", 
+      "capacity": 8, 
+      "floor": "First", 
+      "status": "cleaning", 
+      "position": { "x": 400, "y": 250 },
+      "shape": "round",
+      "createdAt": "2023-06-01T09:25:00Z",
+      "updatedAt": "2024-07-22T16:45:00Z"
+    },
+    { 
+      "id": 7, 
+      "name": "T7", 
+      "capacity": 2, 
+      "floor": "Ground", 
+      "status": "occupied", 
+      "position": { "x": 100, "y": 400 },
+      "shape": "square",
+      "createdAt": "2023-06-01T09:30:00Z",
+      "updatedAt": "2024-07-22T18:10:00Z"
+    },
+    { 
+      "id": 8, 
+      "name": "T8", 
+      "capacity": 6, 
+      "floor": "First", 
+      "status": "available", 
+      "position": { "x": 250, "y": 400 },
+      "shape": "rectangle",
+      "createdAt": "2023-06-01T09:35:00Z",
+      "updatedAt": "2023-06-01T09:35:00Z"
+    }
   ],
   "features": {
     "inventory": true,
     "printerSupport": true,
-    "guestMode": false,
+    "guestMode": true,
     "multiLanguage": true,
     "tableManagement": true,
     "qrMenu": true,
     "loyaltyProgram": false,
-    "deliveryIntegration": false,
-    "analyticsReports": true
+    "deliveryIntegration": true,
+    "analyticsReports": true,
+    "billSplitting": true,
+    "offlineMode": true,
+    "customerDatabase": true,
+    "digitalReceipts": true,
+    "mobileOptimized": true
   },
   "shortcuts": [
-    { "name": "Tea x2", "items": [{ "id": 1, "quantity": 2 }] },
-    { "name": "Thali Combo", "items": [{ "id": 2, "quantity": 1 }, { "id": 1, "quantity": 1 }] },
-    { "name": "Snack Set", "items": [{ "id": 5, "quantity": 2 }, { "id": 4, "quantity": 1 }] }
+    { "id": 1, "name": "Tea x2", "items": [{ "id": 1, "quantity": 2 }], "icon": "☕" },
+    { "id": 2, "name": "Thali Combo", "items": [{ "id": 2, "quantity": 1 }, { "id": 1, "quantity": 1 }], "icon": "🍽️" },
+    { "id": 3, "name": "Snack Set", "items": [{ "id": 5, "quantity": 2 }, { "id": 4, "quantity": 1 }], "icon": "🥪" },
+    { "id": 4, "name": "Breakfast Special", "items": [{ "id": 10, "quantity": 1 }, { "id": 1, "quantity": 1 }], "icon": "🍳" },
+    { "id": 5, "name": "Family Meal", "items": [{ "id": 3, "quantity": 1 }, { "id": 8, "quantity": 4 }, { "id": 9, "quantity": 2 }], "icon": "👨‍👩‍👧‍👦" },
+    { "id": 6, "name": "Dessert Combo", "items": [{ "id": 6, "quantity": 2 }, { "id": 11, "quantity": 1 }], "icon": "🍰" }
   ],
   "settings": {
     "autoCalculateTax": true,
     "defaultPaymentMethod": "cash",
+    "alternatePaymentMethods": ["upi", "card", "wallet"],
     "printBillAutomatically": false,
     "soundNotifications": true,
     "roundOffBills": true,
     "showItemImages": true,
     "compactMode": false,
-    "greeting": "Thank you for visiting Cafe Sunrise!",
-    "footer": "Visit us again soon!"
+    "greeting": {
+      "en": "Thank you for visiting Cafe Sunrise!",
+      "hi": "कैफे सनराइज़ में आने के लिए धन्यवाद!",
+      "ta": "கஃபே சன்ரைஸில் வருகைக்கு நன்றி!",
+      "gu": "કેફે સનરાઇઝની મુલાકાત લેવા બદલ આભાર!"
+    },
+    "footer": {
+      "en": "Visit us again soon!",
+      "hi": "जल्द ही फिर से आएं!",
+      "ta": "மீண்டும் விரைவில் வருகை தாருங்கள்!",
+      "gu": "જલ્દી થી ફરી મુલાકાત લો!"
+    },
+    "printHeader": {
+      "en": "Cafe Sunrise - Fresh & Delicious",
+      "hi": "कैफे सनराइज़ - ताज़ा और स्वादिष्ट",
+      "ta": "கஃபே சன்ரைஸ் - புதிது & ருசியானது",
+      "gu": "કેફે સનરાઇઝ - તાજા અને સ્વાદિષ્ટ"
+    },
+    "tableReservationEnabled": true,
+    "deliveryRadius": 5,
+    "deliveryMinOrder": 100,
+    "deliveryCharges": 30,
+    "printerType": "ESC/POS",
+    "printerConnection": "Bluetooth",
+    "invoiceFormat": "GST",
+    "timezone": "Asia/Kolkata",
+    "backupFrequency": "daily",
+    "enableLoyaltyPoints": false,
+    "defaultGratuity": 0,
+    "kitchenNotificationSound": "bell.mp3",
+    "tableLayout": "grid"
   },
   "inventory": [
-    { "itemId": 1, "stockLevel": 100, "minStock": 20, "unit": "cups" },
-    { "itemId": 2, "stockLevel": 25, "minStock": 5, "unit": "plates" },
-    { "itemId": 3, "stockLevel": 15, "minStock": 3, "unit": "portions" }
+    { 
+      "itemId": 1, 
+      "name": "Tea leaves", 
+      "stockLevel": 2000, 
+      "minStock": 500, 
+      "unit": "grams",
+      "cost": 0.4,
+      "supplier": "Assam Tea Co.",
+      "lastUpdated": "2024-07-18T10:30:00Z",
+      "expiryDate": "2024-12-20T00:00:00Z",
+      "category": "raw-material",
+      "location": "Shelf A1"
+    },
+    { 
+      "itemId": 2, 
+      "name": "Milk", 
+      "stockLevel": 25, 
+      "minStock": 5, 
+      "unit": "liters",
+      "cost": 50,
+      "supplier": "Local Dairy",
+      "lastUpdated": "2024-07-22T08:15:00Z",
+      "expiryDate": "2024-07-25T00:00:00Z",
+      "category": "perishable",
+      "location": "Refrigerator 1"
+    },
+    { 
+      "itemId": 3, 
+      "name": "Rice", 
+      "stockLevel": 15, 
+      "minStock": 5, 
+      "unit": "kg",
+      "cost": 60,
+      "supplier": "Organic Farms Ltd.",
+      "lastUpdated": "2024-07-15T11:20:00Z",
+      "expiryDate": "2025-01-15T00:00:00Z",
+      "category": "staple",
+      "location": "Shelf B2"
+    },
+    { 
+      "itemId": 4, 
+      "name": "Paneer", 
+      "stockLevel": 5, 
+      "minStock": 2, 
+      "unit": "kg",
+      "cost": 280,
+      "supplier": "Local Dairy",
+      "lastUpdated": "2024-07-21T09:10:00Z",
+      "expiryDate": "2024-07-27T00:00:00Z",
+      "category": "perishable",
+      "location": "Refrigerator 2"
+    },
+    { 
+      "itemId": 5, 
+      "name": "Flour (Maida)", 
+      "stockLevel": 12, 
+      "minStock": 3, 
+      "unit": "kg",
+      "cost": 45,
+      "supplier": "Annapurna Foods",
+      "lastUpdated": "2024-07-10T14:45:00Z",
+      "expiryDate": "2024-11-10T00:00:00Z",
+      "category": "staple",
+      "location": "Shelf C1"
+    },
+    { 
+      "itemId": 6, 
+      "name": "Tomatoes", 
+      "stockLevel": 8, 
+      "minStock": 3, 
+      "unit": "kg",
+      "cost": 80,
+      "supplier": "Local Vendor",
+      "lastUpdated": "2024-07-22T07:30:00Z",
+      "expiryDate": "2024-07-28T00:00:00Z",
+      "category": "vegetable",
+      "location": "Refrigerator 3"
+    },
+    { 
+      "itemId": 7, 
+      "name": "Potatoes", 
+      "stockLevel": 20, 
+      "minStock": 5, 
+      "unit": "kg",
+      "cost": 40,
+      "supplier": "Local Vendor",
+      "lastUpdated": "2024-07-20T08:45:00Z",
+      "expiryDate": "2024-08-20T00:00:00Z",
+      "category": "vegetable",
+      "location": "Store Room"
+    },
+    { 
+      "itemId": 8, 
+      "name": "Chicken", 
+      "stockLevel": 8, 
+      "minStock": 3, 
+      "unit": "kg",
+      "cost": 280,
+      "supplier": "Fresh Meats",
+      "lastUpdated": "2024-07-22T07:45:00Z",
+      "expiryDate": "2024-07-24T00:00:00Z",
+      "category": "non-veg",
+      "location": "Freezer 1"
+    }
   ],
+  "orders": [
+    {
+      "id": "ORD001",
+      "tableId": 3,
+      "waiter": "Ravi Kumar",
+      "status": "served",
+      "type": "dine-in",
+      "items": [
+        { "id": 1, "menuItemId": 3, "name": "Paneer Butter Masala", "quantity": 1, "price": 180, "specialInstructions": "Less spicy" },
+        { "id": 2, "menuItemId": 8, "name": "Butter Naan", "quantity": 2, "price": 35 },
+        { "id": 3, "menuItemId": 4, "name": "Cold Coffee", "quantity": 2, "price": 45 }
+      ],
+      "subtotal": 340,
+      "discount": 0,
+      "tax": 61.2,
+      "total": 401.2,
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "createdAt": "2024-07-22T13:30:00Z",
+      "updatedAt": "2024-07-22T14:20:00Z",
+      "servedAt": "2024-07-22T14:15:00Z",
+      "kotPrinted": true,
+      "billPrinted": true
+    },
+    {
+      "id": "ORD002",
+      "tableId": 7,
+      "waiter": "Priya Patel",
+      "status": "preparing",
+      "type": "dine-in",
+      "items": [
+        { "id": 1, "menuItemId": 2, "name": "Special Veg Thali", "quantity": 2, "price": 120 },
+        { "id": 2, "menuItemId": 1, "name": "Masala Tea", "quantity": 2, "price": 15 }
+      ],
+      "subtotal": 270,
+      "discount": 0,
+      "tax": 48.6,
+      "total": 318.6,
+      "paymentStatus": "pending",
+      "createdAt": "2024-07-22T17:45:00Z",
+      "updatedAt": "2024-07-22T17:50:00Z",
+      "kotPrinted": true,
+      "billPrinted": false
+    },
+    {
+      "id": "ORD003",
+      "customerId": "CUST001",
+      "customer": {
+        "name": "Ajay Mehta",
+        "phone": "+91 99876 54321",
+        "address": "45 Park Avenue, City Center"
+      },
+      "status": "delivered",
+      "type": "delivery",
+      "items": [
+        { "id": 1, "menuItemId": 7, "name": "Chicken Biryani", "quantity": 1, "price": 220 },
+        { "id": 2, "menuItemId": 5, "name": "Samosa", "quantity": 4, "price": 25 },
+        { "id": 3, "menuItemId": 12, "name": "Fresh Lime Soda", "quantity": 2, "price": 40 }
+      ],
+      "subtotal": 380,
+      "discount": 0,
+      "tax": 68.4,
+      "deliveryCharge": 30,
+      "total": 478.4,
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "createdAt": "2024-07-22T13:15:00Z",
+      "updatedAt": "2024-07-22T14:00:00Z",
+      "deliveredAt": "2024-07-22T13:55:00Z",
+      "kotPrinted": true,
+      "billPrinted": true
+    },
+    {
+      "id": "ORD004",
+      "status": "completed",
+      "type": "takeaway",
+      "items": [
+        { "id": 1, "menuItemId": 10, "name": "Masala Dosa", "quantity": 3, "price": 90 },
+        { "id": 2, "menuItemId": 1, "name": "Masala Tea", "quantity": 3, "price": 15 }
+      ],
+      "subtotal": 315,
+      "discount": 0,
+      "tax": 56.7,
+      "total": 371.7,
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "customer": {
+        "name": "Walk-in Customer",
+        "phone": "+91 88765 43210"
+      },
+      "createdAt": "2024-07-22T08:45:00Z",
+      "updatedAt": "2024-07-22T09:10:00Z",
+      "completedAt": "2024-07-22T09:05:00Z",
+      "kotPrinted": true,
+      "billPrinted": true
+    },
+    {
+      "id": "ORD005",
+      "tableId": 3,
+      "waiter": "Ravi Kumar",
+      "status": "cancelled",
+      "type": "dine-in",
+      "items": [
+        { "id": 1, "menuItemId": 3, "name": "Paneer Butter Masala", "quantity": 1, "price": 180 }
+      ],
+      "subtotal": 180,
+      "discount": 0,
+      "tax": 32.4,
+      "total": 212.4,
+      "paymentStatus": "cancelled",
+      "cancelReason": "Customer changed mind",
+      "createdAt": "2024-07-22T11:30:00Z",
+      "updatedAt": "2024-07-22T11:40:00Z",
+      "cancelledAt": "2024-07-22T11:40:00Z",
+      "kotPrinted": true,
+      "billPrinted": false
+    }
+  ],
+  "customers": [
+    {
+      "id": "CUST001",
+      "name": "Ajay Mehta",
+      "phone": "+91 99876 54321",
+      "email": "ajay.mehta@gmail.com",
+      "address": "45 Park Avenue, City Center",
+      "visits": 8,
+      "totalSpent": 3540.5,
+      "loyaltyPoints": 0,
+      "lastVisit": "2024-07-22T13:15:00Z",
+      "preferences": ["Chicken Biryani", "Samosa"],
+      "allergies": [],
+      "birthday": "1985-04-12T00:00:00Z",
+      "anniversary": null,
+      "notes": "Prefers spicy food",
+      "createdAt": "2023-09-15T14:30:00Z",
+      "updatedAt": "2024-07-22T14:00:00Z"
+    },
+    {
+      "id": "CUST002",
+      "name": "Sunita Sharma",
+      "phone": "+91 97654 32109",
+      "email": "sunita.sharma@yahoo.com",
+      "address": "78 Green Valley, Suburb Area",
+      "visits": 12,
+      "totalSpent": 6820.75,
+      "loyaltyPoints": 0,
+      "lastVisit": "2024-07-20T19:45:00Z",
+      "preferences": ["Vegetable Fried Rice", "Gulab Jamun"],
+      "allergies": ["Nuts"],
+      "birthday": "1990-08-25T00:00:00Z",
+      "anniversary": "2015-11-10T00:00:00Z",
+      "notes": "Vegetarian, allergic to nuts",
+      "createdAt": "2023-08-05T11:20:00Z",
+      "updatedAt": "2024-07-20T21:30:00Z"
+    },
+    {
+      "id": "CUST003",
+      "name": "Rajiv Malhotra",
+      "phone": "+91 96543 21098",
+      "email": "rajiv.malhotra@hotmail.com",
+      "address": "12 Business Park, Office Complex",
+      "visits": 5,
+      "totalSpent": 2150.25,
+      "loyaltyPoints": 0,
+      "lastVisit": "2024-07-18T13:10:00Z",
+      "preferences": ["Special Veg Thali", "Cold Coffee"],
+      "allergies": [],
+      "birthday": "1978-12-03T00:00:00Z",
+      "anniversary": null,
+      "notes": "Usually orders for office meetings",
+      "createdAt": "2023-11-12T10:15:00Z",
+      "updatedAt": "2024-07-18T14:45:00Z"
+    }
+  ],
+  "reports": {
+    "dailySales": [
+      { "date": "2024-07-21", "amount": 8750.5, "orders": 28, "itemsSold": 112 },
+      { "date": "2024-07-20", "amount": 9230.75, "orders": 31, "itemsSold": 124 },
+      { "date": "2024-07-19", "amount": 7840.25, "orders": 25, "itemsSold": 98 },
+      { "date": "2024-07-18", "amount": 8120.40, "orders": 27, "itemsSold": 105 },
+      { "date": "2024-07-17", "amount": 7950.60, "orders": 26, "itemsSold": 102 },
+      { "date": "2024-07-16", "amount": 8320.90, "orders": 28, "itemsSold": 108 },
+      { "date": "2024-07-15", "amount": 9460.30, "orders": 32, "itemsSold": 130 }
+    ],
+    "topSellingItems": [
+      { "itemId": 3, "name": "Paneer Butter Masala", "quantity": 42, "revenue": 7560 },
+      { "itemId": 2, "name": "Special Veg Thali", "quantity": 38, "revenue": 4560 },
+      { "itemId": 7, "name": "Chicken Biryani", "quantity": 35, "revenue": 7700 },
+      { "itemId": 1, "name": "Masala Tea", "quantity": 75, "revenue": 1125 },
+      { "itemId": 5, "name": "Samosa", "quantity": 68, "revenue": 1700 }
+    ],
+    "orderTypeDistribution": {
+      "dine-in": 65,
+      "takeaway": 20,
+      "delivery": 15
+    },
+    "paymentMethodDistribution": {
+      "cash": 45,
+      "card": 25,
+      "upi": 28,
+      "wallet": 2
+    },
+    "hourlyTraffic": [
+      { "hour": 8, "orders": 5 },
+      { "hour": 9, "orders": 8 },
+      { "hour": 10, "orders": 6 },
+      { "hour": 11, "orders": 4 },
+      { "hour": 12, "orders": 15 },
+      { "hour": 13, "orders": 18 },
+      { "hour": 14, "orders": 9 },
+      { "hour": 15, "orders": 5 },
+      { "hour": 16, "orders": 3 },
+      { "hour": 17, "orders": 6 },
+      { "hour": 18, "orders": 10 },
+      { "hour": 19, "orders": 14 },
+      { "hour": 20, "orders": 12 },
+      { "hour": 21, "orders": 7 },
+      { "hour": 22, "orders": 3 }
+    ],
+    "tableUtilization": [
+      { "tableId": 1, "utilizationRate": 45, "avgOrderValue": 420 },
+      { "tableId": 2, "utilizationRate": 60, "avgOrderValue": 680 },
+      { "tableId": 3, "utilizationRate": 75, "avgOrderValue": 760 },
+      { "tableId": 4, "utilizationRate": 40, "avgOrderValue": 320 },
+      { "tableId": 5, "utilizationRate": 55, "avgOrderValue": 580 },
+      { "tableId": 6, "utilizationRate": 65, "avgOrderValue": 940 },
+      { "tableId": 7, "utilizationRate": 70, "avgOrderValue": 380 },
+      { "tableId": 8, "utilizationRate": 50, "avgOrderValue": 720 }
+    ]
+  },
+  "printers": [
+    {
+      "id": "PRT001",
+      "name": "Kitchen Printer",
+      "type": "thermal",
+      "connection": "bluetooth",
+      "address": "00:11:22:33:44:55",
+      "paperWidth": 80,
+      "enabled": true,
+      "forKot": true,
+      "forBill": false
+    },
+    {
+      "id": "PRT002",
+      "name": "Billing Printer",
+      "type": "thermal",
+      "connection": "bluetooth",
+      "address": "AA:BB:CC:DD:EE:FF",
+      "paperWidth": 80,
+      "enabled": true,
+      "forKot": false,
+      "forBill": true
+    }
+  ],
+  "offline": {
+    "syncStatus": "up-to-date",
+    "lastSyncTime": "2024-07-22T17:30:00Z",
+    "pendingSyncItems": 0,
+    "dataVersion": "2024072201"
+  },
   "version": "1.0.0",
-  "lastUpdated": "2024-01-20T10:30:00Z"
+  "lastUpdated": "2024-07-22T18:30:00Z"
 }
