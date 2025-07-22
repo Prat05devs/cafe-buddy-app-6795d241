@@ -8,7 +8,7 @@ import RecentOrders from '@/components/dashboard/RecentOrders';
 import TopSellingItems from '@/components/dashboard/TopSellingItems';
 
 export const Dashboard = () => {
-  const { config, orders } = useRestaurant();
+  const { config, orders, menuItems } = useRestaurant();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
   
@@ -33,23 +33,23 @@ export const Dashboard = () => {
     totalTables: 12
   };
 
-  const topSellingItems = [
+  const topSellingItems = menuItems.length >= 3 ? [
     { 
-      item: config.menu[0], 
+      item: menuItems[0], 
       quantity: 24, 
-      revenue: config.menu[0].price * 24 
+      revenue: menuItems[0].price * 24 
     },
     { 
-      item: config.menu[1], 
+      item: menuItems[1], 
       quantity: 18, 
-      revenue: config.menu[1].price * 18 
+      revenue: menuItems[1].price * 18 
     },
     { 
-      item: config.menu[2], 
+      item: menuItems[2], 
       quantity: 15, 
-      revenue: config.menu[2].price * 15 
+      revenue: menuItems[2].price * 15 
     }
-  ];
+  ] : [];
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);

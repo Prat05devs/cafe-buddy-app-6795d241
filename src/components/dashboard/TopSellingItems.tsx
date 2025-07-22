@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RestaurantConfig, MenuItem } from '@/lib/config';
+import { RestaurantConfig } from '@/lib/config';
+import { MenuItem } from '@/types/restaurant';
 import { formatCurrency } from '@/lib/utils';
 import { TrendingUp, Award } from 'lucide-react';
 
