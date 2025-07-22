@@ -11,27 +11,40 @@ import {
   Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { RestaurantConfig } from '@/lib/config';
 
 interface NavigationProps {
   currentView: string;
   onViewChange: (view: string) => void;
   className?: string;
+  config?: RestaurantConfig;
 }
 
-const navigationItems = [
-  { id: 'dashboard', label: 'Home', icon: Home },
-  { id: 'menu', label: 'Menu', icon: UtensilsCrossed },
-  { id: 'orders', label: 'Orders', icon: ShoppingCart },
-  { id: 'tables', label: 'Tables', icon: Users },
-  { id: 'reports', label: 'Reports', icon: BarChart3 },
-  { id: 'settings', label: 'Settings', icon: Settings },
+// Base navigation items - always available
+const baseNavigationItems = [
+  { id: 'dashboard', label: 'Home', icon: Home, alwaysShown: true },
+  { id: 'menu', label: 'Menu', icon: UtensilsCrossed, alwaysShown: true },
+  { id: 'orders', label: 'Orders', icon: ShoppingCart, alwaysShown: true },
+  { id: 'tables', label: 'Tables', icon: Users, featureFlag: 'tableManagement' },
+  { id: 'reports', label: 'Reports', icon: BarChart3, featureFlag: 'analyticsReports' },
+  { id: 'settings', label: 'Settings', icon: Settings, alwaysShown: true },
 ];
 
 export const Navigation: React.FC<NavigationProps> = ({
   currentView,
   onViewChange,
-  className
+  className,
+  config
 }) => {
+  // Filter navigation items based on feature flags from config
+  const navigationItems = baseNavigationItems.filter(item => {
+    if (item.alwaysShown) return true;
+    if (!item.featureFlag) return true;
+    if (!config) return true; // Show all items if config is not available
+    
+    return config.features[item.featureFlag as keyof typeof config.features];
+  });
+
   return (
     <nav className={cn(
       "bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-4 shadow-medium",
@@ -64,9 +77,10 @@ export const Navigation: React.FC<NavigationProps> = ({
 };
 
 export const TopBar: React.FC<{
-  restaurantName: string;
+  config: RestaurantConfig;
   currentUser: string;
-}> = ({ restaurantName, currentUser }) => {
+  userRole: string;
+}> = ({ config, currentUser, userRole }) => {
   return (
     <div className="bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-4 shadow-medium mb-6">
       <div className="flex items-center justify-between">
@@ -75,9 +89,9 @@ export const TopBar: React.FC<{
             <UtensilsCrossed className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{restaurantName}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{config.restaurantName}</h1>
             <p className="text-muted-foreground">
-              {new Date().toLocaleDateString('en-US', { 
+              {new Date().toLocaleDateString(config.language === 'en' ? 'en-US' : 'hi-IN', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -88,9 +102,15 @@ export const TopBar: React.FC<{
         </div>
         
         <div className="flex items-center space-x-3">
+          {/* Search and notifications only shown if those features are enabled */}
           <Button variant="glass" size="icon">
             <Search className="h-5 w-5" />
           </Button>
+          {config.features.multiLanguage && (
+            <Button variant="glass" size="icon">
+              <span className="text-sm font-medium">{config.language.toUpperCase()}</span>
+            </Button>
+          )}
           <Button variant="glass" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             <div className="absolute -top-1 -right-1 bg-destructive h-3 w-3 rounded-full"></div>
@@ -98,7 +118,7 @@ export const TopBar: React.FC<{
           <div className="flex items-center space-x-3">
             <div className="text-right">
               <p className="text-sm font-medium text-foreground">{currentUser}</p>
-              <p className="text-xs text-muted-foreground">Manager</p>
+              <p className="text-xs text-muted-foreground">{userRole}</p>
             </div>
             <div className="h-10 w-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow">
               <span className="text-primary-foreground font-semibold">

@@ -7,6 +7,7 @@ import {
   DashboardStats, 
   Restaurant 
 } from '@/types/restaurant';
+import { loadConfig, RestaurantConfig } from '@/lib/config';
 
 // Mock data for demonstration
 const mockCategories: Category[] = [
@@ -199,7 +200,11 @@ const mockOrders: Order[] = [
 ];
 
 export const useRestaurantData = () => {
-  const [restaurant] = useState<Restaurant>({
+  const [config, setConfig] = useState<RestaurantConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Create restaurant object from config
+  const [restaurant, setRestaurant] = useState<Restaurant>({
     id: 'rest-1',
     name: 'DashPOS Restaurant',
     address: '123 Main Street, City',
@@ -217,10 +222,86 @@ export const useRestaurantData = () => {
     }
   });
 
-  const [categories] = useState(mockCategories);
+  // Transform categories from config format to app format
+  const [categories, setCategories] = useState(mockCategories);
+  
+  // Transform menu items from config format to app format
   const [menuItems, setMenuItems] = useState(mockMenuItems);
+  
+  // Transform tables from config format to app format
   const [tables, setTables] = useState(mockTables);
+  
   const [orders, setOrders] = useState(mockOrders);
+
+  // Load config from data.json on component mount
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const configData = await loadConfig();
+        setConfig(configData);
+        
+        // Update restaurant info
+        setRestaurant({
+          id: 'rest-1',
+          name: configData.restaurantName,
+          address: configData.address,
+          phone: configData.phone,
+          email: configData.email,
+          taxRate: configData.gstRate,
+          currency: configData.currency,
+          settings: {
+            enableTableManagement: configData.features.tableManagement,
+            enableInventory: configData.features.inventory,
+            autoCalculateTax: configData.settings.autoCalculateTax,
+            defaultPaymentMethod: configData.settings.defaultPaymentMethod,
+            language: configData.language,
+            theme: configData.theme as 'light' | 'dark' | 'auto'
+          }
+        });
+        
+        // Transform categories
+        setCategories(configData.categories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          displayOrder: cat.order,
+          icon: cat.icon
+        })));
+        
+        // Transform menu items
+        setMenuItems(configData.menu.map(item => ({
+          id: item.id.toString(),
+          name: item.name,
+          description: item.description || '',
+          price: item.price,
+          category: item.category.toLowerCase().replace(/\s+/g, '-'),
+          available: item.available,
+          imageUrl: item.image,
+          ingredients: [],
+          allergens: [],
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })));
+        
+        // Transform tables
+        setTables(configData.tables.map(table => ({
+          id: `table-${table.id}`,
+          number: table.name,
+          capacity: table.capacity,
+          status: table.status,
+          floor: table.floor,
+          position: { x: 0, y: 0 } // Default position
+        })));
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to load config:', error);
+        // Keep using mock data if config fails to load
+        setLoading(false);
+      }
+    };
+    
+    fetchConfig();
+  }, []);
 
   const dashboardStats: DashboardStats = {
     todaysSales: 2840.50,
@@ -311,6 +392,8 @@ export const useRestaurantData = () => {
     orders,
     dashboardStats,
     tableOrders,
+    loading,
+    config,
     // Actions
     addMenuItem,
     updateMenuItem,

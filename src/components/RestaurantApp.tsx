@@ -24,6 +24,8 @@ export const RestaurantApp: React.FC = () => {
     orders,
     dashboardStats,
     tableOrders,
+    loading,
+    config,
     addMenuItem,
     updateMenuItem,
     deleteMenuItem,
@@ -32,9 +34,22 @@ export const RestaurantApp: React.FC = () => {
     addOrder,
     updateTableStatus,
   } = useRestaurantData();
+  
+  // Show loading state if data is still being fetched
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold">Loading Restaurant Data...</h2>
+        </div>
+      </div>
+    );
+  }
 
-  // Create a RestaurantConfig object from the restaurant data
-  const restaurantConfig: RestaurantConfig = {
+  // Use the config loaded from data.json directly
+  // If config wasn't loaded successfully, create a fallback
+  const restaurantConfig = config || {
     restaurantName: restaurant.name,
     logo: '',
     address: restaurant.address,
@@ -275,6 +290,7 @@ export const RestaurantApp: React.FC = () => {
         <Navigation
           currentView={currentView}
           onViewChange={(view) => setCurrentView(view as ViewType)}
+          config={restaurantConfig}
         />
         
         <main className="pb-6">
