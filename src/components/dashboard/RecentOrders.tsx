@@ -1,9 +1,17 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { RestaurantConfig, Order, MenuItem } from '@/lib/config';
+import { RestaurantConfig } from '@/lib/config';
+import { Order as AppOrder } from '@/types/restaurant';
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
 import { Clock, CheckCircle, AlertTriangle, Utensils, ShoppingBag } from 'lucide-react';
+
+// Modified Order interface that accepts string dates for compatibility
+interface Order extends Omit<AppOrder, 'createdAt' | 'updatedAt' | 'servedAt'> {
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  servedAt?: string | Date;
+}
 
 interface RecentOrdersProps {
   config: RestaurantConfig;

@@ -12,8 +12,8 @@ export function formatCurrency(amount: number, config?: RestaurantConfig | null)
   return `${currency}${amount.toFixed(2).replace(/\.00$/, '')}`;
 }
 
-export function formatDate(dateString: string, format: 'short' | 'long' = 'short'): string {
-  const date = new Date(dateString);
+export function formatDate(dateInput: string | Date, format: 'short' | 'long' = 'short'): string {
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   
   if (format === 'short') {
     return date.toLocaleDateString('en-IN', {
@@ -33,8 +33,8 @@ export function formatDate(dateString: string, format: 'short' | 'long' = 'short
   });
 }
 
-export function formatTime(dateString: string): string {
-  const date = new Date(dateString);
+export function formatTime(dateInput: string | Date): string {
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   
   return date.toLocaleTimeString('en-IN', {
     hour: '2-digit',
