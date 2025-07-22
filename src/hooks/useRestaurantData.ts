@@ -262,7 +262,7 @@ export const useRestaurantData = () => {
         // Transform categories
         setCategories(configData.categories.map(cat => ({
           id: cat.id,
-          name: cat.name,
+          name: typeof cat.name === 'string' ? cat.name : (cat.name as any)?.en || cat.name || 'Unnamed Category',
           displayOrder: cat.order,
           icon: cat.icon
         })));
@@ -270,14 +270,14 @@ export const useRestaurantData = () => {
         // Transform menu items
         setMenuItems(configData.menu.map(item => ({
           id: item.id.toString(),
-          name: item.name,
-          description: item.description || '',
+          name: typeof item.name === 'string' ? item.name : (item.name as any)?.en || 'Unnamed Item',
+          description: typeof item.description === 'string' ? item.description : (item.description as any)?.en || '',
           price: item.price,
           category: item.category.toLowerCase().replace(/\s+/g, '-'),
           available: item.available,
           imageUrl: item.image,
-          ingredients: [],
-          allergens: [],
+          ingredients: (item as any).ingredients || [],
+          allergens: (item as any).allergens || [],
           createdAt: new Date(),
           updatedAt: new Date()
         })));
