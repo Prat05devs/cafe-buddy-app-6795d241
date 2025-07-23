@@ -146,7 +146,7 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] p-0">
+      <DialogContent className="max-w-[95vw] sm:max-w-4xl lg:max-w-6xl max-h-[90vh] w-full p-0 overflow-hidden">
         <DialogHeader className="p-3 sm:p-6 pb-0">
           <div className="flex flex-col gap-3">
             <DialogTitle className="text-lg sm:text-2xl">
@@ -260,18 +260,18 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
                 <TabsContent value={selectedCategory} className="mt-4">
                   <ScrollArea className="h-60 sm:h-96">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 pr-2">
                       {filteredMenuItems.filter(item => item.available).map((item) => (
-                        <Card key={item.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                          <CardContent className="p-2 sm:p-4">
-                            <div className="space-y-2">
-                              <div className="flex justify-between items-start">
-                                <h4 className="font-medium text-sm sm:text-base">{getLocalizedText(item.name, language)}</h4>
-                                <Badge variant="secondary" className="text-xs">₹{item.price}</Badge>
+                        <Card key={item.id} className="cursor-pointer hover:shadow-md transition-shadow w-full">
+                          <CardContent className="p-3">
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-start gap-2">
+                                <h4 className="font-medium text-sm flex-1 line-clamp-2">{getLocalizedText(item.name, language)}</h4>
+                                <Badge variant="secondary" className="text-xs shrink-0">₹{item.price}</Badge>
                               </div>
                               
                               {item.description && (
-                                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                                <p className="text-xs text-muted-foreground line-clamp-2">
                                   {getLocalizedText(item.description, language)}
                                 </p>
                               )}
@@ -279,9 +279,9 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
                               <Button 
                                 onClick={() => addToCart(item)}
                                 size="sm" 
-                                className="w-full text-xs sm:text-sm"
+                                className="w-full text-xs"
                               >
-                                <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                <Plus className="h-3 w-3 mr-1" />
                                 {language === 'hi' ? 'जोड़ें' : 'Add'}
                               </Button>
                             </div>
