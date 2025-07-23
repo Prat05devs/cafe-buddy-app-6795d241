@@ -54,22 +54,22 @@ export const MenuManagement: React.FC<MenuManagementProps> = ({
   }, {} as Record<string, MenuItem[]>);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Menu Management</h2>
-          <p className="text-muted-foreground">Manage your restaurant's menu items</p>
+          <h2 className="text-xl sm:text-2xl font-bold">Menu Management</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage your restaurant's menu items</p>
         </div>
-        <Button onClick={onAddItem} size="lg" className="w-full sm:w-auto">
-          <Plus className="h-5 w-5 mr-2" />
+        <Button onClick={onAddItem} size="sm" className="w-full sm:w-auto">
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
           Add New Item
         </Button>
       </div>
 
       {/* Search and Filters */}
-      <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-4">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -77,15 +77,15 @@ export const MenuManagement: React.FC<MenuManagementProps> = ({
                 placeholder="Search menu items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-sm sm:text-base"
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm flex-1 sm:flex-none"
             >
               <option value="all">All Categories</option>
               {categories.map(category => (
@@ -99,17 +99,19 @@ export const MenuManagement: React.FC<MenuManagementProps> = ({
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
-                className="rounded-r-none"
+                className="rounded-r-none flex-1 sm:flex-none"
               >
-                <Grid className="h-4 w-4" />
+                <Grid className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Grid</span>
               </Button>
               <Button
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
-                className="rounded-l-none"
+                className="rounded-l-none flex-1 sm:flex-none"
               >
-                <List className="h-4 w-4" />
+                <List className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">List</span>
               </Button>
             </div>
           </div>
@@ -118,14 +120,18 @@ export const MenuManagement: React.FC<MenuManagementProps> = ({
 
       {/* Menu Items by Category */}
       <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
-        <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${categories.length + 1}, 1fr)` }}>
-          <TabsTrigger value="all">All Items ({items.length})</TabsTrigger>
-          {categories.map(category => (
-            <TabsTrigger key={category.id} value={category.id}>
-              {category.name} ({groupedItems[category.id]?.length || 0})
+        <div className="overflow-x-auto">
+          <TabsList className="grid w-full min-w-max" style={{ gridTemplateColumns: `repeat(${categories.length + 1}, 1fr)` }}>
+            <TabsTrigger value="all" className="text-xs sm:text-sm whitespace-nowrap">
+              All Items ({items.length})
             </TabsTrigger>
-          ))}
-        </TabsList>
+            {categories.map(category => (
+              <TabsTrigger key={category.id} value={category.id} className="text-xs sm:text-sm whitespace-nowrap">
+                {category.name} ({groupedItems[category.id]?.length || 0})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         <TabsContent value="all" className="mt-6">
           <MenuItemsView 
@@ -181,7 +187,7 @@ const MenuItemsView: React.FC<MenuItemsViewProps> = ({
 
   if (viewMode === 'grid') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
         {items.map(item => (
           <MenuItemCard
             key={item.id}
@@ -228,44 +234,44 @@ const MenuItemCard: React.FC<{
         )}
       </div>
       
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-foreground truncate">{item.name}</h3>
-          <Badge variant={item.available ? 'success' : 'secondary'}>
+          <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">{item.name}</h3>
+          <Badge variant={item.available ? 'success' : 'secondary'} className="text-xs">
             {item.available ? 'Available' : 'Unavailable'}
           </Badge>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+        <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">
           {item.description || 'No description available'}
         </p>
         
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-primary">₹{item.price}</span>
+          <span className="text-base sm:text-lg font-bold text-primary">₹{item.price}</span>
           <div className="flex gap-1">
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
               onClick={onToggleAvailability}
-              className="h-8 w-8"
+              className="h-7 w-7 sm:h-8 sm:w-8"
             >
-              {item.available ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {item.available ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4" />}
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
               onClick={onEdit}
-              className="h-8 w-8"
+              className="h-7 w-7 sm:h-8 sm:w-8"
             >
-              <Edit className="h-4 w-4" />
+              <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
               onClick={onDelete}
-              className="h-8 w-8 text-destructive hover:text-destructive"
+              className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:text-destructive"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </div>

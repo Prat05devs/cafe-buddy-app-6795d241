@@ -50,21 +50,21 @@ export const TableManagement: React.FC<TableManagementProps> = ({
   const stats = getTableStats();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Table Management</h2>
-          <p className="text-muted-foreground">Monitor and manage restaurant tables</p>
+          <h2 className="text-xl sm:text-2xl font-bold">Table Management</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Monitor and manage restaurant tables</p>
         </div>
-        <Button>
+        <Button size="sm" className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Add Table
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
         <StatCard
           title="Total Tables"
           value={stats.total}
@@ -123,7 +123,7 @@ export const TableManagement: React.FC<TableManagementProps> = ({
       )}
 
       {/* Tables Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-4">
         {filteredTables.map(table => (
           <TableCard
             key={table.id}
@@ -157,13 +157,13 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) 
   };
 
   return (
-    <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-4">
-      <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
-          <Icon className="h-5 w-5" />
+    <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-2 sm:p-4">
+      <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className={`p-1 sm:p-2 rounded-lg ${colorClasses[color]}`}>
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-lg sm:text-2xl font-bold">{value}</p>
           <p className="text-xs text-muted-foreground">{title}</p>
         </div>
       </div>
@@ -214,16 +214,16 @@ const TableCard: React.FC<TableCardProps> = ({
 
   return (
     <Card 
-      className={`bg-gradient-glass backdrop-blur-md border-glass-border p-4 cursor-pointer hover:shadow-medium transition-all duration-300 ${
+      className={`bg-gradient-glass backdrop-blur-md border-glass-border p-2 sm:p-4 cursor-pointer hover:shadow-medium transition-all duration-300 ${
         table.status === 'occupied' ? 'ring-2 ring-primary/50' : ''
       }`}
       onClick={onSelect}
     >
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-2 sm:space-y-3">
         {/* Table Number */}
         <div className="relative">
-          <div className="bg-gradient-primary p-3 rounded-xl mx-auto w-fit text-primary-foreground">
-            <span className="text-lg font-bold">T{table.number}</span>
+          <div className="bg-gradient-primary p-2 sm:p-3 rounded-xl mx-auto w-fit text-primary-foreground">
+            <span className="text-sm sm:text-lg font-bold">T{table.number}</span>
           </div>
           <Badge 
             variant={getStatusColor(table.status)} 
@@ -236,20 +236,20 @@ const TableCard: React.FC<TableCardProps> = ({
         {/* Table Info */}
         <div className="space-y-1">
           <p className="text-xs text-muted-foreground">
-            Capacity: {table.capacity} guests
+            Cap: {table.capacity}
           </p>
           {table.status === 'occupied' && activeOrders.length > 0 && (
             <>
               <p className="text-xs font-medium text-primary">
-                {activeOrders.length} active order{activeOrders.length > 1 ? 's' : ''}
+                {activeOrders.length} order{activeOrders.length > 1 ? 's' : ''}
               </p>
-              <p className="text-sm font-bold">₹{totalAmount}</p>
+              <p className="text-xs sm:text-sm font-bold">₹{totalAmount}</p>
             </>
           )}
         </div>
 
         {/* Quick Actions */}
-        <div className="flex gap-1 justify-center">
+        <div className="flex flex-col sm:flex-row gap-1 justify-center">
           {table.status === 'available' && (
             <Button
               size="sm"
@@ -257,10 +257,10 @@ const TableCard: React.FC<TableCardProps> = ({
                 e.stopPropagation();
                 onAddOrder();
               }}
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs px-1 sm:px-2 py-1 h-auto"
             >
-              <Plus className="h-3 w-3 mr-1" />
-              Order
+              <Plus className="h-3 w-3 sm:mr-1" />
+              <span className="hidden sm:inline">Order</span>
             </Button>
           )}
           
@@ -273,7 +273,7 @@ const TableCard: React.FC<TableCardProps> = ({
                   e.stopPropagation();
                   onViewOrders();
                 }}
-                className="text-xs px-2 py-1 h-auto"
+                className="text-xs px-1 sm:px-2 py-1 h-auto"
               >
                 View
               </Button>
@@ -284,7 +284,7 @@ const TableCard: React.FC<TableCardProps> = ({
                   e.stopPropagation();
                   onClean();
                 }}
-                className="text-xs px-2 py-1 h-auto"
+                className="text-xs px-1 sm:px-2 py-1 h-auto"
               >
                 <RotateCcw className="h-3 w-3" />
               </Button>
@@ -299,10 +299,10 @@ const TableCard: React.FC<TableCardProps> = ({
                 e.stopPropagation();
                 onClean();
               }}
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs px-1 sm:px-2 py-1 h-auto"
             >
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Done
+              <CheckCircle className="h-3 w-3 sm:mr-1" />
+              <span className="hidden sm:inline">Done</span>
             </Button>
           )}
         </div>

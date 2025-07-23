@@ -51,38 +51,40 @@ export const OrderManagement: React.FC<OrderManagementProps> = ({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Order Management</h2>
-          <p className="text-muted-foreground">Track and manage all orders</p>
+          <h2 className="text-xl sm:text-2xl font-bold">Order Management</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Track and manage all orders</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={onRefreshOrders}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+          <Button variant="outline" onClick={onRefreshOrders} size="sm" className="flex-1 sm:flex-none">
+            <RefreshCw className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Order
+          <Button size="sm" className="flex-1 sm:flex-none">
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">New Order</span>
           </Button>
         </div>
       </div>
 
       {/* Order Status Tabs */}
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-        <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${statusTabs.length}, 1fr)` }}>
-          {statusTabs.map(tab => (
-            <TabsTrigger 
-              key={tab.value} 
-              value={tab.value}
-              className="text-xs sm:text-sm"
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="grid w-full min-w-max" style={{ gridTemplateColumns: `repeat(${statusTabs.length}, 1fr)` }}>
+            {statusTabs.map(tab => (
+              <TabsTrigger 
+                key={tab.value} 
+                value={tab.value}
+                className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4"
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         <div className="mt-6">
           {statusTabs.map(tab => (
@@ -180,37 +182,37 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const minutesAgo = Math.floor(timeSinceCreated / 60000);
 
   return (
-    <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-6 hover:shadow-medium transition-all duration-300">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-3 sm:p-6 hover:shadow-medium transition-all duration-300">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {/* Order Info */}
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="bg-gradient-primary p-2 rounded-lg text-primary-foreground font-bold">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-3">
+            <div className="bg-gradient-primary p-2 rounded-lg text-primary-foreground font-bold text-sm">
               #{order.orderNumber}
             </div>
-            <Badge variant={getStatusColor(order.status)}>
+            <Badge variant={getStatusColor(order.status)} className="text-xs">
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
             </Badge>
-            <Badge variant="outline">
+            <Badge variant="outline" className="text-xs">
               {order.type.charAt(0).toUpperCase() + order.type.slice(1)}
             </Badge>
             {order.table && (
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="text-xs">
                 Table {order.table.number}
               </Badge>
             )}
           </div>
 
-          <div className="text-sm text-muted-foreground mb-2">
+          <div className="text-xs sm:text-sm text-muted-foreground mb-2">
             <span>{minutesAgo} minutes ago</span>
             {order.customerName && <span> • {order.customerName}</span>}
-            {order.customerPhone && <span> • {order.customerPhone}</span>}
+            {order.customerPhone && <span className="hidden sm:inline"> • {order.customerPhone}</span>}
           </div>
 
           <div className="space-y-1">
             {order.items.slice(0, 3).map(item => (
-              <div key={item.id} className="flex items-center justify-between text-sm">
-                <span>{item.quantity}x {item.menuItem.name}</span>
+              <div key={item.id} className="flex items-center justify-between text-xs sm:text-sm">
+                <span className="truncate">{item.quantity}x {item.menuItem.name}</span>
                 <span className="text-muted-foreground">₹{item.totalPrice}</span>
               </div>
             ))}
@@ -222,20 +224,20 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
 
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-            <span className="font-semibold">Total: ₹{order.total}</span>
-            <Badge variant={order.paymentStatus === 'paid' ? 'success' : 'warning'}>
+            <span className="font-semibold text-sm sm:text-base">Total: ₹{order.total}</span>
+            <Badge variant={order.paymentStatus === 'paid' ? 'success' : 'warning'} className="text-xs">
               {order.paymentStatus}
             </Badge>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex flex-row lg:flex-col gap-2 lg:w-32">
+        <div className="flex flex-col sm:flex-row gap-2">
           {nextStatus && (
             <Button
               size="sm"
               onClick={() => onUpdateStatus(order.id, nextStatus)}
-              className="flex-1 lg:flex-none"
+              className="flex-1 text-xs sm:text-sm"
             >
               {nextStatus === 'preparing' && 'Start Preparing'}
               {nextStatus === 'ready' && 'Mark Ready'}
@@ -246,17 +248,21 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <div className="flex gap-1">
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={() => onViewDetails(order)}
+              className="flex-1 sm:flex-none"
             >
-              <Eye className="h-4 w-4" />
+              <Eye className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">View</span>
             </Button>
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={() => onPrintOrder(order.id)}
+              className="flex-1 sm:flex-none"
             >
-              <Printer className="h-4 w-4" />
+              <Printer className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Print</span>
             </Button>
           </div>
         </div>

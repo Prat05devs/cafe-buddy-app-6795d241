@@ -57,17 +57,17 @@ export const Settings: React.FC<SettingsProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">
+        <h2 className="text-xl sm:text-2xl font-bold mb-2">
           {language === 'hi' ? 'सेटिंग्स' : 'Settings'}
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           {language === 'hi' ? 'अपने रेस्तरां की सेटिंग्स को कस्टमाइज़ करें' : 'Customize your restaurant settings'}
         </p>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-3 sm:gap-6">
         {/* Language Settings */}
         <Card>
           <CardHeader>
@@ -101,22 +101,22 @@ export const Settings: React.FC<SettingsProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'रेस्तरां का नाम' : 'Restaurant Name'}</Label>
-                <Input value={config.restaurantName} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'रेस्तरां का नाम' : 'Restaurant Name'}</Label>
+                <Input value={config.restaurantName} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</Label>
-                <Input value={config.phone} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</Label>
+                <Input value={config.phone} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'ईमेल' : 'Email'}</Label>
-                <Input value={config.email} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'ईमेल' : 'Email'}</Label>
+                <Input value={config.email} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'पता' : 'Address'}</Label>
-                <Input value={config.address} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'पता' : 'Address'}</Label>
+                <Input value={config.address} disabled className="text-sm" />
               </div>
             </div>
           </CardContent>
@@ -210,18 +210,18 @@ export const Settings: React.FC<SettingsProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'जीएसटी दर' : 'GST Rate'}</Label>
-                <Input value={`${config.gstRate}%`} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'जीएसटी दर' : 'GST Rate'}</Label>
+                <Input value={`${config.gstRate}%`} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'सीजीएसटी दर' : 'CGST Rate'}</Label>
-                <Input value={`${(config as any).cgstRate || config.gstRate / 2}%`} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'सीजीएसटी दर' : 'CGST Rate'}</Label>
+                <Input value={`${(config as any).cgstRate || config.gstRate / 2}%`} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'hi' ? 'एसजीएसटी दर' : 'SGST Rate'}</Label>
-                <Input value={`${(config as any).sgstRate || config.gstRate / 2}%`} disabled />
+                <Label className="text-sm">{language === 'hi' ? 'एसजीएसटी दर' : 'SGST Rate'}</Label>
+                <Input value={`${(config as any).sgstRate || config.gstRate / 2}%`} disabled className="text-sm" />
               </div>
             </div>
           </CardContent>
@@ -229,7 +229,7 @@ export const Settings: React.FC<SettingsProps> = ({
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={handleSaveSettings}>
+        <Button onClick={handleSaveSettings} className="w-full sm:w-auto text-sm">
           {language === 'hi' ? 'सेटिंग्स सेव करें' : 'Save Settings'}
         </Button>
       </div>

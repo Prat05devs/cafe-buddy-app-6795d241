@@ -48,10 +48,10 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <nav className={cn(
-      "bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-4 shadow-medium",
+      "bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-2 sm:p-4 shadow-medium",
       className
     )}>
-      <div className="flex flex-col space-y-2 lg:flex-row lg:space-y-0 lg:space-x-2">
+      <div className="flex flex-wrap gap-1 sm:gap-2 lg:flex-nowrap lg:space-x-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
@@ -60,15 +60,16 @@ export const Navigation: React.FC<NavigationProps> = ({
             <Button
               key={item.id}
               variant={isActive ? "default" : "glass"}
-              size="default"
+              size="sm"
               onClick={() => onViewChange(item.id)}
               className={cn(
-                "flex items-center justify-start lg:justify-center gap-3 lg:gap-2 w-full lg:w-auto",
+                "flex items-center justify-center gap-1 sm:gap-2 min-w-0 flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-4",
                 isActive && "shadow-glow"
               )}
             >
-              <Icon className="h-5 w-5" />
-              <span className="lg:hidden xl:inline">{item.label}</span>
+              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="hidden sm:inline lg:hidden xl:inline truncate">{item.label}</span>
+              <span className="sm:hidden text-xs">{item.label}</span>
             </Button>
           );
         })}

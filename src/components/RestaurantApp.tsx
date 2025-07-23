@@ -345,7 +345,7 @@ export const RestaurantApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-6 space-y-3 sm:space-y-6">
         <TopBar
           config={restaurantConfig}
           currentUser="Jordan Smith"
@@ -358,7 +358,7 @@ export const RestaurantApp: React.FC = () => {
           config={restaurantConfig}
         />
         
-        <main className="pb-6">
+        <main className="pb-2 sm:pb-6">
           {renderCurrentView()}
         </main>
 

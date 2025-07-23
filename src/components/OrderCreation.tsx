@@ -145,23 +145,23 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl">
+      <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] p-0">
+        <DialogHeader className="p-3 sm:p-6 pb-0">
+          <DialogTitle className="text-lg sm:text-2xl">
             {language === 'hi' ? 'नया ऑर्डर बनाएं' : 'Create New Order'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-col lg:flex-row flex-1 min-h-0">
           {/* Menu Section */}
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-3 sm:p-6">
             <div className="space-y-4">
               {/* Order Type & Table Selection */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <Label>{language === 'hi' ? 'ऑर्डर प्रकार' : 'Order Type'}</Label>
+                  <Label className="text-sm">{language === 'hi' ? 'ऑर्डर प्रकार' : 'Order Type'}</Label>
                   <Select value={orderType} onValueChange={(value: any) => setOrderType(value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -174,9 +174,9 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
                 {orderType === 'dine-in' && (
                   <div>
-                    <Label>{language === 'hi' ? 'टेबल चुनें' : 'Select Table'}</Label>
+                    <Label className="text-sm">{language === 'hi' ? 'टेबल चुनें' : 'Select Table'}</Label>
                     <Select value={selectedTableId} onValueChange={setSelectedTableId}>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue placeholder={language === 'hi' ? 'टेबल चुनें' : 'Choose table'} />
                       </SelectTrigger>
                       <SelectContent>
@@ -193,21 +193,23 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
               {/* Customer Info for non-dine-in orders */}
               {orderType !== 'dine-in' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <Label>{language === 'hi' ? 'ग्राहक का नाम' : 'Customer Name'}</Label>
+                    <Label className="text-sm">{language === 'hi' ? 'ग्राहक का नाम' : 'Customer Name'}</Label>
                     <Input 
                       value={customerName} 
                       onChange={(e) => setCustomerName(e.target.value)}
                       placeholder={language === 'hi' ? 'नाम दर्ज करें' : 'Enter name'}
+                      className="text-sm"
                     />
                   </div>
                   <div>
-                    <Label>{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</Label>
+                    <Label className="text-sm">{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</Label>
                     <Input 
                       value={customerPhone} 
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder={language === 'hi' ? 'फोन नंबर दर्ज करें' : 'Enter phone number'}
+                      className="text-sm"
                     />
                   </div>
                 </div>
@@ -215,29 +217,31 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
               {/* Menu Items */}
               <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                <TabsList className="grid w-full grid-cols-auto">
-                  <TabsTrigger value="">{language === 'hi' ? 'सभी' : 'All'}</TabsTrigger>
-                  {categories.map((category) => (
-                    <TabsTrigger key={category.id} value={category.name}>
-                      {getLocalizedText(category.name, language)}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+                <div className="overflow-x-auto">
+                  <TabsList className="grid w-full min-w-max" style={{ gridTemplateColumns: `repeat(${categories.length + 1}, 1fr)` }}>
+                    <TabsTrigger value="" className="text-xs sm:text-sm whitespace-nowrap">{language === 'hi' ? 'सभी' : 'All'}</TabsTrigger>
+                    {categories.map((category) => (
+                      <TabsTrigger key={category.id} value={category.name} className="text-xs sm:text-sm whitespace-nowrap">
+                        {getLocalizedText(category.name, language)}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
 
                 <TabsContent value={selectedCategory} className="mt-4">
-                  <ScrollArea className="h-96">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <ScrollArea className="h-60 sm:h-96">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                       {filteredMenuItems.filter(item => item.available).map((item) => (
                         <Card key={item.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                          <CardContent className="p-4">
+                          <CardContent className="p-2 sm:p-4">
                             <div className="space-y-2">
                               <div className="flex justify-between items-start">
-                                <h4 className="font-medium">{getLocalizedText(item.name, language)}</h4>
-                                <Badge variant="secondary">₹{item.price}</Badge>
+                                <h4 className="font-medium text-sm sm:text-base">{getLocalizedText(item.name, language)}</h4>
+                                <Badge variant="secondary" className="text-xs">₹{item.price}</Badge>
                               </div>
                               
                               {item.description && (
-                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                                   {getLocalizedText(item.description, language)}
                                 </p>
                               )}
@@ -245,9 +249,9 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
                               <Button 
                                 onClick={() => addToCart(item)}
                                 size="sm" 
-                                className="w-full"
+                                className="w-full text-xs sm:text-sm"
                               >
-                                <Plus className="h-4 w-4 mr-1" />
+                                <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                                 {language === 'hi' ? 'जोड़ें' : 'Add'}
                               </Button>
                             </div>
@@ -262,61 +266,64 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
           </div>
 
           {/* Cart Section */}
-          <div className="w-80 border-l bg-muted/20 p-6">
-            <div className="space-y-4">
+          <div className="w-full lg:w-80 border-t lg:border-l lg:border-t-0 bg-muted/20 p-3 sm:p-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5" />
-                <h3 className="font-semibold">
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
+                <h3 className="font-semibold text-sm sm:text-base">
                   {language === 'hi' ? 'ऑर्डर सारांश' : 'Order Summary'}
                 </h3>
-                <Badge variant="secondary">{cart.length}</Badge>
+                <Badge variant="secondary" className="text-xs">{cart.length}</Badge>
               </div>
 
               <Separator />
 
-              <ScrollArea className="h-96">
+              <ScrollArea className="h-48 sm:h-96">
                 {cart.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-muted-foreground text-center py-4 sm:py-8 text-sm">
                     {language === 'hi' ? 'कार्ट खाली है' : 'Cart is empty'}
                   </p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {cart.map((item) => (
                       <Card key={item.id}>
-                        <CardContent className="p-3">
+                        <CardContent className="p-2 sm:p-3">
                           <div className="space-y-2">
                             <div className="flex justify-between items-start">
-                              <h5 className="font-medium text-sm">
+                              <h5 className="font-medium text-xs sm:text-sm">
                                 {getLocalizedText(item.menuItem.name, language)}
                               </h5>
                               <Button 
                                 variant="ghost" 
                                 size="sm"
                                 onClick={() => removeFromCart(item.id)}
+                                className="h-6 w-6 sm:h-8 sm:w-8"
                               >
-                                <X className="h-4 w-4" />
+                                <X className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </div>
                             
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 sm:gap-2">
                                 <Button 
                                   variant="outline" 
                                   size="sm"
                                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                  className="h-6 w-6 sm:h-8 sm:w-8"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
-                                <span className="w-8 text-center">{item.quantity}</span>
+                                <span className="w-6 sm:w-8 text-center text-xs sm:text-sm">{item.quantity}</span>
                                 <Button 
                                   variant="outline" 
                                   size="sm"
                                   onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                  className="h-6 w-6 sm:h-8 sm:w-8"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </Button>
                               </div>
-                              <span className="font-medium">₹{item.totalPrice}</span>
+                              <span className="font-medium text-xs sm:text-sm">₹{item.totalPrice}</span>
                             </div>
                           </div>
                         </CardContent>
@@ -330,7 +337,7 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
                 <>
                   <Separator />
                   <div className="space-y-2">
-                    <div className="flex justify-between font-semibold text-lg">
+                    <div className="flex justify-between font-semibold text-base sm:text-lg">
                       <span>{language === 'hi' ? 'कुल' : 'Total'}</span>
                       <span>₹{calculateTotal()}</span>
                     </div>
@@ -341,11 +348,11 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
           </div>
         </div>
 
-        <DialogFooter className="p-6 pt-0">
-          <Button variant="outline" onClick={handleClose}>
+        <DialogFooter className="p-3 sm:p-6 pt-0">
+          <Button variant="outline" onClick={handleClose} className="text-sm">
             {language === 'hi' ? 'रद्द करें' : 'Cancel'}
           </Button>
-          <Button onClick={handleSubmit} disabled={cart.length === 0}>
+          <Button onClick={handleSubmit} disabled={cart.length === 0} className="text-sm">
             {language === 'hi' ? 'ऑर्डर बनाएं' : 'Create Order'}
           </Button>
         </DialogFooter>
