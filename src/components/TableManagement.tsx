@@ -6,10 +6,11 @@ import {
   Users, 
   Plus,
   RotateCcw,
+  Settings,
   Clock,
   CheckCircle,
-  Utensils,
-  MapPin
+  AlertCircle,
+  Utensils
 } from 'lucide-react';
 import { Table, Order } from '@/types/restaurant';
 
@@ -30,18 +31,20 @@ export const TableManagement: React.FC<TableManagementProps> = ({
   onCleanTable,
   onViewTableOrders
 }) => {
-  const [selectedArea, setSelectedArea] = useState<string>('Main Dining');
+  const [selectedFloor, setSelectedFloor] = useState<string>('all');
   
-  // Define areas similar to the reference image
-  const areas = ['Main Dining', 'Terrace', 'Outdoor'];
-  const filteredTables = tables.filter(t => t.floor === selectedArea || (selectedArea === 'Main Dining' && !t.floor));
+  const floors = Array.from(new Set(tables.map(t => t.floor).filter(Boolean)));
+  const filteredTables = selectedFloor === 'all' 
+    ? tables 
+    : tables.filter(t => t.floor === selectedFloor);
 
   const getTableStats = () => {
     const available = tables.filter(t => t.status === 'available').length;
     const occupied = tables.filter(t => t.status === 'occupied').length;
     const reserved = tables.filter(t => t.status === 'reserved').length;
-    
-    return { available, occupied, reserved, total: tables.length };
+    const cleaning = tables.filter(t => t.status === 'cleaning').length;
+
+    return { available, occupied, reserved, cleaning, total: tables.length };
   };
 
   const stats = getTableStats();
@@ -51,73 +54,88 @@ export const TableManagement: React.FC<TableManagementProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Manage Tables</h2>
+          <h2 className="text-2xl font-bold">Table Management</h2>
+          <p className="text-muted-foreground">Monitor and manage restaurant tables</p>
         </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Table
+        </Button>
       </div>
 
-      {/* Status Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-          <span>Available</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-          <span>Reserved</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <span>On Dine</span>
-        </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <StatCard
+          title="Total Tables"
+          value={stats.total}
+          icon={Users}
+          color="default"
+        />
+        <StatCard
+          title="Available"
+          value={stats.available}
+          icon={CheckCircle}
+          color="success"
+        />
+        <StatCard
+          title="Occupied"
+          value={stats.occupied}
+          icon={Utensils}
+          color="warning"
+        />
+        <StatCard
+          title="Reserved"
+          value={stats.reserved}
+          icon={Clock}
+          color="default"
+        />
+        <StatCard
+          title="Cleaning"
+          value={stats.cleaning}
+          icon={RotateCcw}
+          color="secondary"
+        />
       </div>
 
-      {/* Area Selection */}
-      <div className="flex gap-2">
-        {areas.map(area => (
-          <Button
-            key={area}
-            variant={selectedArea === area ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSelectedArea(area)}
-            className="min-w-[100px]"
-          >
-            {area}
-          </Button>
+      {/* Floor Filter */}
+      {floors.length > 0 && (
+        <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-4">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={selectedFloor === 'all' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedFloor('all')}
+            >
+              All Floors
+            </Button>
+            {floors.map(floor => (
+              <Button
+                key={floor}
+                variant={selectedFloor === floor ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFloor(floor)}
+              >
+                {floor}
+              </Button>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Tables Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        {filteredTables.map(table => (
+          <TableCard
+            key={table.id}
+            table={table}
+            orders={tableOrders[table.id] || []}
+            onSelect={() => onSelectTable(table)}
+            onAddOrder={() => onAddOrder(table.id)}
+            onClean={() => onCleanTable(table.id)}
+            onViewOrders={() => onViewTableOrders(table.id)}
+          />
         ))}
       </div>
-
-      {/* Floor Plan View */}
-      <Card className="p-8 min-h-[500px] bg-gradient-to-br from-background/50 to-muted/30">
-        <div className="grid grid-cols-12 gap-4 h-full">
-          {/* Simulate floor plan layout */}
-          {filteredTables.map((table, index) => {
-            // Create a pseudo floor plan layout
-            const positions = [
-              { col: 2, row: 2 }, { col: 4, row: 2 }, { col: 6, row: 2 }, { col: 8, row: 2 }, { col: 10, row: 2 },
-              { col: 2, row: 4 }, { col: 4, row: 4 }, { col: 6, row: 4 }, { col: 8, row: 4 }, { col: 10, row: 4 },
-              { col: 2, row: 6 }, { col: 4, row: 6 }, { col: 6, row: 6 }, { col: 8, row: 6 }, { col: 10, row: 6 },
-            ];
-            
-            const position = positions[index] || { col: 2 + (index % 5) * 2, row: 2 + Math.floor(index / 5) * 2 };
-            
-            return (
-              <TableIcon
-                key={table.id}
-                table={table}
-                orders={tableOrders[table.id] || []}
-                onSelect={() => onSelectTable(table)}
-                onAddOrder={() => onAddOrder(table.id)}
-                onClean={() => onCleanTable(table.id)}
-                onViewOrders={() => onViewTableOrders(table.id)}
-                style={{
-                  gridColumn: `${position.col} / span 1`,
-                  gridRow: `${position.row} / span 1`,
-                }}
-              />
-            );
-          })}
-        </div>
-      </Card>
     </div>
   );
 };
@@ -153,71 +171,143 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) 
   );
 };
 
-interface TableIconProps {
+interface TableCardProps {
   table: Table;
   orders: Order[];
   onSelect: () => void;
   onAddOrder: () => void;
   onClean: () => void;
   onViewOrders: () => void;
-  style?: React.CSSProperties;
 }
 
-const TableIcon: React.FC<TableIconProps> = ({
+const TableCard: React.FC<TableCardProps> = ({
   table,
   orders,
   onSelect,
   onAddOrder,
   onClean,
-  onViewOrders,
-  style
+  onViewOrders
 }) => {
   const getStatusColor = (status: Table['status']) => {
     const colors = {
-      available: 'bg-emerald-500 hover:bg-emerald-600',
-      occupied: 'bg-red-500 hover:bg-red-600',
-      reserved: 'bg-orange-500 hover:bg-orange-600',
-      cleaning: 'bg-gray-400 hover:bg-gray-500'
+      available: 'success',
+      occupied: 'warning',
+      reserved: 'default',
+      cleaning: 'secondary'
     };
-    return colors[status];
+    return colors[status] as 'success' | 'warning' | 'default' | 'secondary';
   };
 
+  const getStatusIcon = (status: Table['status']) => {
+    const icons = {
+      available: CheckCircle,
+      occupied: Utensils,
+      reserved: Clock,
+      cleaning: RotateCcw
+    };
+    return icons[status];
+  };
+
+  const StatusIcon = getStatusIcon(table.status);
   const activeOrders = orders.filter(order => ['pending', 'preparing', 'ready'].includes(order.status));
+  const totalAmount = activeOrders.reduce((sum, order) => sum + order.total, 0);
 
   return (
-    <div style={style} className="flex flex-col items-center space-y-1">
-      {/* Table Icon */}
-      <div
-        className={`w-16 h-16 rounded-lg ${getStatusColor(table.status)} cursor-pointer transition-all duration-200 hover:scale-105 flex flex-col items-center justify-center text-white shadow-lg relative`}
-        onClick={onSelect}
-      >
+    <Card 
+      className={`bg-gradient-glass backdrop-blur-md border-glass-border p-4 cursor-pointer hover:shadow-medium transition-all duration-300 ${
+        table.status === 'occupied' ? 'ring-2 ring-primary/50' : ''
+      }`}
+      onClick={onSelect}
+    >
+      <div className="text-center space-y-3">
         {/* Table Number */}
-        <div className="text-sm font-bold">#{table.number}</div>
-        
-        {/* Capacity */}
-        <div className="flex items-center text-xs">
-          <Users className="w-3 h-3 mr-1" />
-          {table.capacity}
+        <div className="relative">
+          <div className="bg-gradient-primary p-3 rounded-xl mx-auto w-fit text-primary-foreground">
+            <span className="text-lg font-bold">T{table.number}</span>
+          </div>
+          <Badge 
+            variant={getStatusColor(table.status)} 
+            className="absolute -top-1 -right-1 text-xs"
+          >
+            <StatusIcon className="h-3 w-3" />
+          </Badge>
         </div>
 
-        {/* Active Orders Badge */}
-        {activeOrders.length > 0 && (
-          <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-            {activeOrders.length}
-          </div>
-        )}
-      </div>
+        {/* Table Info */}
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">
+            Capacity: {table.capacity} guests
+          </p>
+          {table.status === 'occupied' && activeOrders.length > 0 && (
+            <>
+              <p className="text-xs font-medium text-primary">
+                {activeOrders.length} active order{activeOrders.length > 1 ? 's' : ''}
+              </p>
+              <p className="text-sm font-bold">₹{totalAmount}</p>
+            </>
+          )}
+        </div>
 
-      {/* Table Label */}
-      <div className="text-xs text-center">
-        <div className="font-medium">Table #{table.number}</div>
-        {table.status === 'occupied' && activeOrders.length > 0 && (
-          <div className="text-orange-600 font-medium">
-            {activeOrders.length} order{activeOrders.length > 1 ? 's' : ''}
-          </div>
-        )}
+        {/* Quick Actions */}
+        <div className="flex gap-1 justify-center">
+          {table.status === 'available' && (
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddOrder();
+              }}
+              className="text-xs px-2 py-1 h-auto"
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Order
+            </Button>
+          )}
+          
+          {table.status === 'occupied' && (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewOrders();
+                }}
+                className="text-xs px-2 py-1 h-auto"
+              >
+                View
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClean();
+                }}
+                className="text-xs px-2 py-1 h-auto"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </Button>
+            </>
+          )}
+          
+          {table.status === 'cleaning' && (
+            <Button
+              size="sm"
+              variant="success"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClean();
+              }}
+              className="text-xs px-2 py-1 h-auto"
+            >
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Done
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
