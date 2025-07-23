@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { Toaster } from '@/components/ui/toaster';
-import { AppSidebar } from '@/components/AppSidebar';
+import { Navigation } from './Navigation';
 import { TopBar } from './common/TopBar';
 import { Dashboard } from './Dashboard';
 import { MenuManagement } from './MenuManagement';
@@ -15,7 +13,10 @@ import { useToast } from '@/hooks/use-toast';
 import { MenuItem, Order, Table, OrderItem } from '@/types/restaurant';
 import { RestaurantConfig } from '@/lib/config';
 
+type ViewType = 'dashboard' | 'menu' | 'orders' | 'tables' | 'reports' | 'settings';
+
 export const RestaurantApp: React.FC = () => {
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [language, setLanguage] = useState<string>('en');
   const [isOrderCreationOpen, setIsOrderCreationOpen] = useState(false);
   const [isTableDetailsOpen, setIsTableDetailsOpen] = useState(false);
@@ -269,119 +270,127 @@ export const RestaurantApp: React.FC = () => {
     });
   };
 
-  // Menu Management Component with handlers
-  const MenuManagementPage = () => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{language === 'hi' ? 'मेन्यू प्रबंधन' : 'Menu Management'}</h2>
-        <button
-          onClick={() => setIsOrderCreationOpen(true)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          {language === 'hi' ? 'त्वरित ऑर्डर' : 'Quick Order'}
-        </button>
-      </div>
-      <MenuManagement
-        items={menuItems}
-        categories={categories}
-        onAddItem={handleAddMenuItem}
-        onEditItem={handleEditMenuItem}
-        onDeleteItem={handleDeleteMenuItem}
-        onToggleAvailability={handleToggleItemAvailability}
-      />
-    </div>
-  );
-
-  // Order Management Component with handlers
-  const OrderManagementPage = () => (
-    <OrderManagement
-      orders={orders}
-      onUpdateOrderStatus={handleUpdateOrderStatus}
-      onViewOrderDetails={handleViewOrderDetails}
-      onPrintOrder={handlePrintOrder}
-      onRefreshOrders={handleRefreshOrders}
-    />
-  );
-
-  // Table Management Component with handlers
-  const TableManagementPage = () => (
-    <TableManagement
-      tables={tables}
-      tableOrders={tableOrders}
-      onSelectTable={handleSelectTable}
-      onAddOrder={handleAddTableOrder}
-      onCleanTable={handleCleanTable}
-      onViewTableOrders={handleViewTableOrders}
-    />
-  );
-
-  // Reports Page
-  const ReportsPage = () => (
-    <div className="bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-12 text-center">
-      <h3 className="text-lg font-semibold mb-2">Reports & Analytics</h3>
-      <p className="text-muted-foreground">Coming soon - detailed sales reports and analytics</p>
-    </div>
-  );
-
-  // Settings Page with handlers
-  const SettingsPage = () => (
-    <Settings
-      config={restaurantConfig}
-      onLanguageChange={handleLanguageChange}
-      onSettingsUpdate={handleSettingsUpdate}
-    />
-  );
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return <Dashboard />;
+      
+      case 'menu':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">{language === 'hi' ? 'मेन्यू प्रबंधन' : 'Menu Management'}</h2>
+              <button
+                onClick={() => setIsOrderCreationOpen(true)}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                {language === 'hi' ? 'त्वरित ऑर्डर' : 'Quick Order'}
+              </button>
+            </div>
+            <MenuManagement
+              items={menuItems}
+              categories={categories}
+              onAddItem={handleAddMenuItem}
+              onEditItem={handleEditMenuItem}
+              onDeleteItem={handleDeleteMenuItem}
+              onToggleAvailability={handleToggleItemAvailability}
+            />
+          </div>
+        );
+      
+      case 'orders':
+        return (
+          <OrderManagement
+            orders={orders}
+            onUpdateOrderStatus={handleUpdateOrderStatus}
+            onViewOrderDetails={handleViewOrderDetails}
+            onPrintOrder={handlePrintOrder}
+            onRefreshOrders={handleRefreshOrders}
+          />
+        );
+      
+      case 'tables':
+        return (
+          <TableManagement
+            tables={tables}
+            tableOrders={tableOrders}
+            onSelectTable={handleSelectTable}
+            onAddOrder={handleAddTableOrder}
+            onCleanTable={handleCleanTable}
+            onViewTableOrders={handleViewTableOrders}
+          />
+        );
+      
+      case 'reports':
+        return (
+          <div className="bg-gradient-glass backdrop-blur-md border border-glass-border rounded-2xl p-12 text-center">
+            <h3 className="text-lg font-semibold mb-2">Reports & Analytics</h3>
+            <p className="text-muted-foreground">Coming soon - detailed sales reports and analytics</p>
+          </div>
+        );
+      
+      case 'settings':
+        return (
+          <Settings
+            config={restaurantConfig}
+            onLanguageChange={handleLanguageChange}
+            onSettingsUpdate={handleSettingsUpdate}
+          />
+        );
+      
+      default:
+        return <Dashboard />;
+    }
+  };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-6 space-y-3 sm:space-y-6">
+        <TopBar
+          config={restaurantConfig}
+          currentUser="Jordan Smith"
+          userRole="Manager"
+        />
         
-        <div className="flex-1 flex flex-col">
-          <TopBar
-            config={restaurantConfig}
-            currentUser="Jordan Smith"
-            userRole="Manager"
-          />
-          
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto p-4 max-w-7xl">
-              <Dashboard />
-            </div>
-          </main>
-        </div>
+        <Navigation
+          currentView={currentView}
+          onViewChange={(view) => setCurrentView(view as ViewType)}
+          config={restaurantConfig}
+        />
+        
+        <main className="pb-2 sm:pb-6">
+          {renderCurrentView()}
+        </main>
+
+        {/* Order Creation Modal */}
+        <OrderCreation
+          isOpen={isOrderCreationOpen}
+          onClose={() => {
+            setIsOrderCreationOpen(false);
+            setSelectedTable(null);
+          }}
+          onSubmit={handleCreateOrder}
+          menuItems={menuItems}
+          categories={categories}
+          tables={tables}
+          selectedTable={selectedTable}
+          language={language}
+        />
+
+        {/* Table Order Details Modal */}
+        <TableOrderDetails
+          isOpen={isTableDetailsOpen}
+          onClose={() => {
+            setIsTableDetailsOpen(false);
+            setSelectedTable(null);
+          }}
+          table={selectedTable}
+          orders={orders}
+          language={language}
+          onUpdateOrderStatus={handleUpdateOrderStatus}
+          onAddOrder={handleAddTableOrder}
+        />
       </div>
-
-      {/* Order Creation Modal */}
-      <OrderCreation
-        isOpen={isOrderCreationOpen}
-        onClose={() => {
-          setIsOrderCreationOpen(false);
-          setSelectedTable(null);
-        }}
-        onSubmit={handleCreateOrder}
-        menuItems={menuItems}
-        categories={categories}
-        tables={tables}
-        selectedTable={selectedTable}
-        language={language}
-      />
-
-      {/* Table Order Details Modal */}
-      <TableOrderDetails
-        isOpen={isTableDetailsOpen}
-        onClose={() => {
-          setIsTableDetailsOpen(false);
-          setSelectedTable(null);
-        }}
-        table={selectedTable}
-        orders={orders}
-        language={language}
-        onUpdateOrderStatus={handleUpdateOrderStatus}
-        onAddOrder={handleAddTableOrder}
-      />
-      
-      <Toaster />
-    </SidebarProvider>
+    </div>
   );
 };
