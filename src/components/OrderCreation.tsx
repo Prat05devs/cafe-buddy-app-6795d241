@@ -148,13 +148,13 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] p-0">
         <DialogHeader className="p-3 sm:p-6 pb-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col gap-3">
             <DialogTitle className="text-lg sm:text-2xl">
               {language === 'hi' ? 'नया ऑर्डर बनाएं' : 'Create New Order'}
             </DialogTitle>
             
             {/* Mobile Toggle Buttons */}
-            <div className="flex gap-2 sm:hidden">
+            <div className="flex gap-2 lg:hidden">
               <Button
                 variant={currentView === 'menu' ? 'default' : 'outline'}
                 size="sm"
@@ -184,7 +184,7 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
 
         <div className="flex flex-col lg:flex-row flex-1 min-h-0">
           {/* Menu Section */}
-          <div className={`flex-1 p-3 sm:p-6 ${currentView === 'cart' ? 'hidden sm:block' : 'block'}`}>
+          <div className={`flex-1 p-3 sm:p-6 ${currentView === 'cart' ? 'hidden lg:block' : 'block'}`}>
             <div className="space-y-4">
               {/* Order Type & Table Selection */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -296,7 +296,7 @@ export const OrderCreation: React.FC<OrderCreationProps> = ({
           </div>
 
           {/* Cart Section */}
-          <div className={`w-full lg:w-80 border-t lg:border-l lg:border-t-0 bg-muted/20 p-3 sm:p-6 ${currentView === 'menu' ? 'hidden sm:block' : 'block'}`}>
+          <div className={`w-full lg:w-80 border-t lg:border-l lg:border-t-0 bg-muted/20 p-3 sm:p-6 ${currentView === 'menu' ? 'hidden lg:block' : 'block'}`}>
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
