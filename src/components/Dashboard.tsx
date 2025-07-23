@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRestaurant } from '@/contexts/RestaurantContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import { TopBar } from '@/components/common/TopBar';
-import { Sidebar } from '@/components/common/Sidebar';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import RecentOrders from '@/components/dashboard/RecentOrders';
 import TopSellingItems from '@/components/dashboard/TopSellingItems';
@@ -10,8 +7,6 @@ import { getLocalizedText } from '@/lib/helpers';
 
 export const Dashboard = () => {
   const { config, orders, menuItems } = useRestaurant();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activePage, setActivePage] = useState('dashboard');
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
@@ -54,60 +49,27 @@ export const Dashboard = () => {
     }
   ] : [];
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
-  const handleNavigate = (page: string) => {
-    setActivePage(page);
-  };
-
   return (
-    <div className="flex h-screen bg-gradient-background overflow-hidden">
-      {/* Sidebar */}
-      <div className="hidden md:block">
-        <Sidebar
-          config={config}
-          activePage={activePage}
-          onNavigate={handleNavigate}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={toggleSidebar}
-        />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome to {restaurantName} management system
+        </p>
       </div>
       
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar 
+      {/* Stats */}
+      <DashboardStats config={config} stats={stats} />
+      
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentOrders 
           config={config} 
-          onToggleSidebar={toggleSidebar}
-          currentUser={config.staff[0].name}
-          userRole={config.staff[0].role}
+          orders={orders.slice(0, 5)} 
+          onViewAll={() => {}} 
         />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome to {restaurantName} management system
-              </p>
-            </div>
-            
-            {/* Stats */}
-            <DashboardStats config={config} stats={stats} />
-            
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentOrders 
-                config={config} 
-                orders={orders.slice(0, 5)} 
-                onViewAll={() => handleNavigate('orders')} 
-              />
-              
-              <TopSellingItems config={config} items={topSellingItems} />
-            </div>
-          </div>
-        </main>
+        <TopSellingItems config={config} items={topSellingItems} />
       </div>
     </div>
   );
