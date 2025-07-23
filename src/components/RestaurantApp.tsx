@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -334,64 +333,55 @@ export const RestaurantApp: React.FC = () => {
   );
 
   return (
-    <Router>
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full bg-background">
-          <AppSidebar />
-          
-          <div className="flex-1 flex flex-col">
-            <TopBar
-              config={restaurantConfig}
-              currentUser="Jordan Smith"
-              userRole="Manager"
-            />
-            
-            <main className="flex-1 overflow-auto">
-              <div className="container mx-auto p-4 max-w-7xl">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/menu" element={<MenuManagementPage />} />
-                  <Route path="/orders" element={<OrderManagementPage />} />
-                  <Route path="/tables" element={<TableManagementPage />} />
-                  <Route path="/reports" element={<ReportsPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                </Routes>
-              </div>
-            </main>
-          </div>
-        </div>
-
-        {/* Order Creation Modal */}
-        <OrderCreation
-          isOpen={isOrderCreationOpen}
-          onClose={() => {
-            setIsOrderCreationOpen(false);
-            setSelectedTable(null);
-          }}
-          onSubmit={handleCreateOrder}
-          menuItems={menuItems}
-          categories={categories}
-          tables={tables}
-          selectedTable={selectedTable}
-          language={language}
-        />
-
-        {/* Table Order Details Modal */}
-        <TableOrderDetails
-          isOpen={isTableDetailsOpen}
-          onClose={() => {
-            setIsTableDetailsOpen(false);
-            setSelectedTable(null);
-          }}
-          table={selectedTable}
-          orders={orders}
-          language={language}
-          onUpdateOrderStatus={handleUpdateOrderStatus}
-          onAddOrder={handleAddTableOrder}
-        />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
         
-        <Toaster />
-      </SidebarProvider>
-    </Router>
+        <div className="flex-1 flex flex-col">
+          <TopBar
+            config={restaurantConfig}
+            currentUser="Jordan Smith"
+            userRole="Manager"
+          />
+          
+          <main className="flex-1 overflow-auto">
+            <div className="container mx-auto p-4 max-w-7xl">
+              <Dashboard />
+            </div>
+          </main>
+        </div>
+      </div>
+
+      {/* Order Creation Modal */}
+      <OrderCreation
+        isOpen={isOrderCreationOpen}
+        onClose={() => {
+          setIsOrderCreationOpen(false);
+          setSelectedTable(null);
+        }}
+        onSubmit={handleCreateOrder}
+        menuItems={menuItems}
+        categories={categories}
+        tables={tables}
+        selectedTable={selectedTable}
+        language={language}
+      />
+
+      {/* Table Order Details Modal */}
+      <TableOrderDetails
+        isOpen={isTableDetailsOpen}
+        onClose={() => {
+          setIsTableDetailsOpen(false);
+          setSelectedTable(null);
+        }}
+        table={selectedTable}
+        orders={orders}
+        language={language}
+        onUpdateOrderStatus={handleUpdateOrderStatus}
+        onAddOrder={handleAddTableOrder}
+      />
+      
+      <Toaster />
+    </SidebarProvider>
   );
 };
