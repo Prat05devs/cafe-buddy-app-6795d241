@@ -1,33 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useRestaurant } from '@/contexts/RestaurantContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import { TopBar } from '@/components/common/TopBar';
-import { Sidebar } from '@/components/common/Sidebar';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import RecentOrders from '@/components/dashboard/RecentOrders';
 import TopSellingItems from '@/components/dashboard/TopSellingItems';
 import { getLocalizedText } from '@/lib/helpers';
 
-export const Dashboard = () => {
-  const { config, orders, menuItems, loading } = useRestaurant();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activePage, setActivePage] = useState('dashboard');
+interface DashboardProps {
+  onNavigate: (page: string) => void;
+}
+
+export const Dashboard = ({ onNavigate }: DashboardProps) => {
+  const { config, orders, menuItems } = useRestaurant();
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
-  // Show loading screen while data is being loaded
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <h2 className="text-2xl font-bold mb-2">Loading Restaurant Data...</h2>
-          <p className="text-muted-foreground">Please wait while we set up your restaurant</p>
-        </div>
-      </div>
-    );
-  }
-
   // Create fallback config if none exists
   const fallbackConfig: any = {
     restaurantName: 'Cafe Buddy',
@@ -135,46 +121,29 @@ export const Dashboard = () => {
       .slice(0, 3); // Top 3 items
   })();
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
-  const handleNavigate = (page: string) => {
-    setActivePage(page);
-  };
-
   return (
-    <div className="flex h-screen bg-gradient-background overflow-hidden">
-      
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome to {restaurantName} management system
+          </p>
+        </div>
         
+        {/* Stats */}
+        <DashboardStats config={activeConfig} stats={stats} />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome to {restaurantName} management system
-              </p>
-            </div>
-            
-            {/* Stats */}
-            <DashboardStats config={activeConfig} stats={stats} />
-            
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentOrders 
-                config={activeConfig} 
-                orders={orders.slice(0, 5)} 
-                onViewAll={() => handleNavigate('orders')} 
-              />
-              
-              <TopSellingItems config={activeConfig} items={topSellingItems} />
-            </div>
-          </div>
-        </main>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RecentOrders 
+            config={activeConfig} 
+            orders={orders.slice(0, 5)} 
+            onViewAll={() => onNavigate('orders')} 
+          />
+          
+          <TopSellingItems config={activeConfig} items={topSellingItems} />
+        </div>
       </div>
     </div>
   );
