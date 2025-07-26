@@ -3,6 +3,11 @@ import { useRestaurant } from '@/contexts/RestaurantContext';
 import { TopBar } from '@/components/common/TopBar';
 import { Navigation } from '@/components/Navigation';
 import { Dashboard } from '@/components/Dashboard';
+import { MenuManagement } from '@/components/MenuManagement';
+import { OrderManagement } from '@/components/OrderManagement';
+import { TableManagement } from '@/components/TableManagement';
+import Reports from '@/components/Reports';
+import { Settings } from '@/components/Settings';
 import { getLocalizedText } from '@/lib/helpers';
 
 export const RestaurantApp = () => {
@@ -29,9 +34,72 @@ export const RestaurantApp = () => {
   };
 
   const renderActivePage = () => {
+    const { 
+      menuItems, 
+      categories, 
+      orders, 
+      tables, 
+      tableOrders,
+      addMenuItem,
+      updateMenuItem,
+      deleteMenuItem,
+      toggleMenuItemAvailability,
+      updateOrderStatus,
+      addOrder,
+      updateTableStatus
+    } = useRestaurant();
+
     switch (activePage) {
       case 'dashboard':
         return <Dashboard onNavigate={handleNavigate} />;
+      
+      case 'menu':
+        return (
+          <MenuManagement
+            items={menuItems}
+            categories={categories}
+            onAddItem={() => {/* TODO: Implement add item modal */}}
+            onEditItem={(item) => {/* TODO: Implement edit item modal */}}
+            onDeleteItem={deleteMenuItem}
+            onToggleAvailability={toggleMenuItemAvailability}
+          />
+        );
+      
+      case 'orders':
+        return (
+          <OrderManagement
+            orders={orders}
+            onUpdateOrderStatus={updateOrderStatus}
+            onViewOrderDetails={(order) => {/* TODO: Implement order details modal */}}
+            onPrintOrder={(orderId) => {/* TODO: Implement print functionality */}}
+            onRefreshOrders={() => {/* TODO: Implement refresh */}}
+          />
+        );
+      
+      case 'tables':
+        return (
+          <TableManagement
+            tables={tables}
+            tableOrders={tableOrders}
+            onSelectTable={(table) => {/* TODO: Implement table selection */}}
+            onAddOrder={(tableId) => {/* TODO: Implement add order for table */}}
+            onCleanTable={(tableId) => updateTableStatus(tableId, 'available')}
+            onViewTableOrders={(tableId) => {/* TODO: Implement table orders view */}}
+          />
+        );
+      
+      case 'reports':
+        return <Reports />;
+      
+      case 'settings':
+        return (
+          <Settings
+            config={config}
+            onLanguageChange={(language) => {/* TODO: Implement language change */}}
+            onSettingsUpdate={(settings) => {/* TODO: Implement settings update */}}
+          />
+        );
+      
       default:
         return <Dashboard onNavigate={handleNavigate} />;
     }
