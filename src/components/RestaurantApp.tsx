@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useRestaurant } from '@/contexts/RestaurantContext';
 import { TopBar } from '@/components/common/TopBar';
-import { Sidebar } from '@/components/common/Sidebar';
+import { Navigation } from '@/components/Navigation';
 import { Dashboard } from '@/components/Dashboard';
 import { getLocalizedText } from '@/lib/helpers';
 
 export const RestaurantApp = () => {
   const { config, loading } = useRestaurant();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
@@ -25,10 +24,6 @@ export const RestaurantApp = () => {
     );
   }
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
   const handleNavigate = (page: string) => {
     setActivePage(page);
   };
@@ -43,22 +38,20 @@ export const RestaurantApp = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-background overflow-hidden">
-      <Sidebar 
-        config={config}
-        collapsed={sidebarCollapsed}
-        activePage={activePage}
-        onNavigate={handleNavigate}
-      />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gradient-background">
+      <div className="flex flex-col">
         <TopBar 
           config={config}
-          onToggleSidebar={toggleSidebar}
         />
         
-        <main className="flex-1 overflow-y-auto">
+        <Navigation 
+          currentView={activePage}
+          onViewChange={handleNavigate}
+          config={config}
+          className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b"
+        />
+        
+        <main className="flex-1">
           {renderActivePage()}
         </main>
       </div>
