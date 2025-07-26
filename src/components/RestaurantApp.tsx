@@ -45,6 +45,7 @@ export const RestaurantApp = () => {
   return (
     <div className="flex h-screen bg-gradient-background overflow-hidden">
       <Sidebar 
+        config={config}
         collapsed={sidebarCollapsed}
         activePage={activePage}
         onNavigate={handleNavigate}
@@ -53,9 +54,8 @@ export const RestaurantApp = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
-          restaurantName={restaurantName}
+          config={config}
           onToggleSidebar={toggleSidebar}
-          sidebarCollapsed={sidebarCollapsed}
         />
         
         <main className="flex-1 overflow-y-auto">
