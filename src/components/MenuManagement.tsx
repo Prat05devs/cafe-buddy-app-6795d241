@@ -55,17 +55,7 @@ export const MenuManagement: React.FC<MenuManagementProps> = ({
 
   return (
     <div className="space-y-3 sm:space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold">Menu Management</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your restaurant's menu items</p>
-        </div>
-        <Button onClick={onAddItem} size="sm" className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-          Add New Item
-        </Button>
-      </div>
+    
 
       {/* Search and Filters */}
       <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-3 sm:p-4">
@@ -237,7 +227,7 @@ const MenuItemCard: React.FC<{
       <div className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-2">
           <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">{item.name}</h3>
-          <Badge variant={item.available ? 'success' : 'secondary'} className="text-xs">
+          <Badge variant={item.available ? 'default' : 'secondary'} className={`text-xs ${item.available ? 'bg-green-500 hover:bg-green-500 text-white' : ''}`}>
             {item.available ? 'Available' : 'Unavailable'}
           </Badge>
         </div>
@@ -302,7 +292,7 @@ const MenuItemRow: React.FC<{
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground">{item.name}</h3>
-              <Badge variant={item.available ? 'success' : 'secondary'}>
+              <Badge variant={item.available ? 'default' : 'secondary'} className={item.available ? 'bg-green-500 hover:bg-green-500 text-white' : ''}>
                 {item.available ? 'Available' : 'Unavailable'}
               </Badge>
             </div>

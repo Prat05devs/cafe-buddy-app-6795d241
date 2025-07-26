@@ -144,7 +144,7 @@ const mockOrders: Order[] = [
     tableId: 'table-1',
     table: mockTables[0],
     type: 'dine-in',
-    status: 'preparing',
+    status: 'served',
     items: [
       {
         id: 'item-1',
@@ -160,9 +160,11 @@ const mockOrders: Order[] = [
     tax: 4.8,
     discount: 0,
     total: 52.8,
-    paymentStatus: 'pending',
-    createdAt: new Date(Date.now() - 15 * 60000), // 15 minutes ago
+    paymentStatus: 'paid',
+    paymentMethod: 'cash',
+    createdAt: new Date(Date.now() - 3 * 60 * 60000), // 3 hours ago
     updatedAt: new Date(),
+    servedAt: new Date(Date.now() - 2.5 * 60 * 60000),
   },
   {
     id: 'order-2',
@@ -170,7 +172,7 @@ const mockOrders: Order[] = [
     tableId: 'table-3',
     table: mockTables[2],
     type: 'dine-in',
-    status: 'ready',
+    status: 'served',
     items: [
       {
         id: 'item-2',
@@ -193,6 +195,155 @@ const mockOrders: Order[] = [
     tax: 4.2,
     discount: 2,
     total: 44.2,
+    paymentStatus: 'paid',
+    paymentMethod: 'upi',
+    createdAt: new Date(Date.now() - 2 * 60 * 60000), // 2 hours ago
+    updatedAt: new Date(),
+    servedAt: new Date(Date.now() - 1.5 * 60 * 60000),
+  },
+  {
+    id: 'order-3',
+    orderNumber: 'ORD003',
+    tableId: 'table-5',
+    table: mockTables[4],
+    type: 'dine-in',
+    status: 'served',
+    items: [
+      {
+        id: 'item-4',
+        menuItemId: '3',
+        menuItem: mockMenuItems[2],
+        quantity: 1,
+        price: 28,
+        totalPrice: 28,
+      },
+      {
+        id: 'item-5',
+        menuItemId: '4',
+        menuItem: mockMenuItems[3],
+        quantity: 2,
+        price: 22,
+        totalPrice: 44,
+      }
+    ],
+    subtotal: 72,
+    tax: 7.2,
+    discount: 5,
+    total: 74.2,
+    paymentStatus: 'paid',
+    paymentMethod: 'card',
+    createdAt: new Date(Date.now() - 4 * 60 * 60000), // 4 hours ago
+    updatedAt: new Date(),
+    servedAt: new Date(Date.now() - 3.5 * 60 * 60000),
+  },
+  {
+    id: 'order-4',
+    orderNumber: 'ORD004',
+    tableId: 'table-2',
+    table: mockTables[1],
+    type: 'takeaway',
+    status: 'served',
+    items: [
+      {
+        id: 'item-6',
+        menuItemId: '5',
+        menuItem: mockMenuItems[4],
+        quantity: 3,
+        price: 18,
+        totalPrice: 54,
+      }
+    ],
+    subtotal: 54,
+    tax: 5.4,
+    discount: 0,
+    total: 59.4,
+    paymentStatus: 'paid',
+    paymentMethod: 'cash',
+    createdAt: new Date(Date.now() - 5 * 60 * 60000), // 5 hours ago
+    updatedAt: new Date(),
+    servedAt: new Date(Date.now() - 4.5 * 60 * 60000),
+  },
+  {
+    id: 'order-5',
+    orderNumber: 'ORD005',
+    tableId: 'table-6',
+    table: mockTables[5],
+    type: 'dine-in',
+    status: 'served',
+    items: [
+      {
+        id: 'item-7',
+        menuItemId: '1',
+        menuItem: mockMenuItems[0],
+        quantity: 1,
+        price: 24,
+        totalPrice: 24,
+      },
+      {
+        id: 'item-8',
+        menuItemId: '7',
+        menuItem: mockMenuItems[6],
+        quantity: 2,
+        price: 10,
+        totalPrice: 20,
+      }
+    ],
+    subtotal: 44,
+    tax: 4.4,
+    discount: 0,
+    total: 48.4,
+    paymentStatus: 'paid',
+    paymentMethod: 'upi',
+    createdAt: new Date(Date.now() - 24 * 60 * 60000), // Yesterday
+    updatedAt: new Date(Date.now() - 23.5 * 60 * 60000),
+    servedAt: new Date(Date.now() - 23 * 60 * 60000),
+  },
+  {
+    id: 'order-6',
+    orderNumber: 'ORD006',
+    tableId: 'table-4',
+    table: mockTables[3],
+    type: 'dine-in',
+    status: 'preparing',
+    items: [
+      {
+        id: 'item-9',
+        menuItemId: '2',
+        menuItem: mockMenuItems[1],
+        quantity: 2,
+        price: 22,
+        totalPrice: 44,
+      }
+    ],
+    subtotal: 44,
+    tax: 4.4,
+    discount: 0,
+    total: 48.4,
+    paymentStatus: 'pending',
+    createdAt: new Date(Date.now() - 15 * 60000), // 15 minutes ago
+    updatedAt: new Date(),
+  },
+  {
+    id: 'order-7',
+    orderNumber: 'ORD007',
+    tableId: 'table-7',
+    table: mockTables[6],
+    type: 'dine-in',
+    status: 'ready',
+    items: [
+      {
+        id: 'item-10',
+        menuItemId: '3',
+        menuItem: mockMenuItems[2],
+        quantity: 1,
+        price: 28,
+        totalPrice: 28,
+      }
+    ],
+    subtotal: 28,
+    tax: 2.8,
+    discount: 0,
+    total: 30.8,
     paymentStatus: 'pending',
     createdAt: new Date(Date.now() - 25 * 60000), // 25 minutes ago
     updatedAt: new Date(),
@@ -295,7 +446,52 @@ export const useRestaurantData = () => {
         setLoading(false);
       } catch (error) {
         console.error('Failed to load config:', error);
-        // Keep using mock data if config fails to load
+        console.log('Using fallback configuration...');
+        
+        // Set a fallback config when loading fails
+        const fallbackConfig: RestaurantConfig = {
+          restaurantName: 'Cafe Buddy',
+          logo: '',
+          address: '123 Main Street',
+          phone: '+1-234-567-8900',
+          email: 'info@cafebuddy.com',
+          currency: '$',
+          language: 'en',
+          gstRate: 18,
+          theme: 'light',
+          menu: [],
+          categories: [],
+          staff: [],
+          tables: [],
+          features: {
+            inventory: false,
+            tableManagement: true,
+            printerSupport: false,
+            guestMode: false,
+            multiLanguage: false,
+            qrMenu: false,
+            loyaltyProgram: false,
+            deliveryIntegration: false,
+            analyticsReports: true,
+          },
+          shortcuts: [],
+          settings: {
+            autoCalculateTax: true,
+            defaultPaymentMethod: 'cash',
+            printBillAutomatically: false,
+            soundNotifications: false,
+            roundOffBills: true,
+            showItemImages: true,
+            compactMode: false,
+            greeting: 'Welcome to Cafe Buddy',
+            footer: 'Thank you for your visit!',
+          },
+          inventory: [],
+          version: '1.0.0',
+          lastUpdated: new Date().toISOString(),
+        };
+        
+        setConfig(fallbackConfig);
         setLoading(false);
       }
     };

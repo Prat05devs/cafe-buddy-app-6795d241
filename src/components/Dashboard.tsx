@@ -9,50 +9,131 @@ import TopSellingItems from '@/components/dashboard/TopSellingItems';
 import { getLocalizedText } from '@/lib/helpers';
 
 export const Dashboard = () => {
-  const { config, orders, menuItems } = useRestaurant();
+  const { config, orders, menuItems, loading } = useRestaurant();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
-  if (!config) {
+  // Show loading screen while data is being loaded
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Loading...</h2>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <h2 className="text-2xl font-bold mb-2">Loading Restaurant Data...</h2>
           <p className="text-muted-foreground">Please wait while we set up your restaurant</p>
         </div>
       </div>
     );
   }
 
-  // Mock data for demo
+  // Create fallback config if none exists
+  const fallbackConfig: any = {
+    restaurantName: 'Cafe Buddy',
+    logo: '',
+    address: '123 Main Street',
+    phone: '+1-234-567-8900',
+    email: 'info@cafebuddy.com',
+    currency: '$',
+    language: 'en',
+    gstRate: 18,
+    theme: 'light' as const,
+    menu: [],
+    categories: [],
+    staff: [],
+    tables: [],
+    features: {
+      inventory: false,
+      tableManagement: true,
+      printerSupport: false,
+      guestMode: false,
+      multiLanguage: false,
+      qrMenu: false,
+      loyaltyProgram: false,
+      deliveryIntegration: false,
+      analyticsReports: true,
+    },
+    shortcuts: [],
+    settings: {
+      autoCalculateTax: true,
+      defaultPaymentMethod: 'cash',
+      printBillAutomatically: false,
+      soundNotifications: false,
+      roundOffBills: true,
+      showItemImages: true,
+      compactMode: false,
+      greeting: 'Welcome to Cafe Buddy',
+      footer: 'Thank you for your visit!',
+    },
+    inventory: [],
+    version: '1.0.0',
+    lastUpdated: new Date().toISOString(),
+  };
+  
+  const activeConfig = config || fallbackConfig;
+
+  // Calculate real-time stats from actual data
+  const today = new Date();
+  const todayOrders = orders.filter(order => {
+    const orderDate = new Date(order.createdAt);
+    return orderDate.toDateString() === today.toDateString();
+  });
+
+  const paidTodayOrders = todayOrders.filter(order => order.paymentStatus === 'paid');
+  const pendingOrders = orders.filter(order => order.status === 'pending' || order.status === 'preparing');
+  const completedOrders = orders.filter(order => order.status === 'served');
+
+  const todaySales = paidTodayOrders.reduce((sum, order) => sum + order.total, 0);
+  
+  // Calculate weekly sales (last 7 days)
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weeklyOrders = orders.filter(order => {
+    const orderDate = new Date(order.createdAt);
+    return orderDate >= weekAgo && order.paymentStatus === 'paid';
+  });
+  const weekSales = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
+
+  // Real-time stats from actual orders data
   const stats = {
-    todaySales: 12460.75,
-    weekSales: 68250.50,
-    pendingOrders: 3,
-    completedOrders: 42,
-    availableTables: 8,
+    todaySales: todaySales,
+    weekSales: weekSales,
+    pendingOrders: pendingOrders.length,
+    completedOrders: completedOrders.length,
+    availableTables: 8, // This would come from table management
     totalTables: 12
   };
 
-  const topSellingItems = menuItems.length >= 3 ? [
-    { 
-      item: menuItems[0], 
-      quantity: 24, 
-      revenue: menuItems[0].price * 24 
-    },
-    { 
-      item: menuItems[1], 
-      quantity: 18, 
-      revenue: menuItems[1].price * 18 
-    },
-    { 
-      item: menuItems[2], 
-      quantity: 15, 
-      revenue: menuItems[2].price * 15 
-    }
-  ] : [];
+  // Calculate top selling items from real order data
+  const topSellingItems = (() => {
+    const itemStats = new Map();
+
+    // Process all completed orders to calculate top selling items
+    const completedPaidOrders = orders.filter(order => 
+      order.status === 'served' && order.paymentStatus === 'paid'
+    );
+
+    completedPaidOrders.forEach(order => {
+      order.items.forEach(item => {
+        const key = item.menuItemId;
+        const current = itemStats.get(key) || { 
+          item: item.menuItem, 
+          quantity: 0, 
+          revenue: 0 
+        };
+        itemStats.set(key, {
+          ...current,
+          quantity: current.quantity + item.quantity,
+          revenue: current.revenue + item.totalPrice
+        });
+      });
+    });
+
+    return Array.from(itemStats.values())
+      .sort((a, b) => b.quantity - a.quantity) // Sort by quantity sold
+      .slice(0, 3); // Top 3 items
+  })();
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -64,25 +145,11 @@ export const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-gradient-background overflow-hidden">
-      {/* Sidebar */}
-      <div className="hidden md:block">
-        <Sidebar
-          config={config}
-          activePage={activePage}
-          onNavigate={handleNavigate}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={toggleSidebar}
-        />
-      </div>
+      
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar 
-          config={config} 
-          onToggleSidebar={toggleSidebar}
-          currentUser={config.staff[0].name}
-          userRole={config.staff[0].role}
-        />
+        
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
@@ -94,17 +161,17 @@ export const Dashboard = () => {
             </div>
             
             {/* Stats */}
-            <DashboardStats config={config} stats={stats} />
+            <DashboardStats config={activeConfig} stats={stats} />
             
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentOrders 
-                config={config} 
+                config={activeConfig} 
                 orders={orders.slice(0, 5)} 
                 onViewAll={() => handleNavigate('orders')} 
               />
               
-              <TopSellingItems config={config} items={topSellingItems} />
+              <TopSellingItems config={activeConfig} items={topSellingItems} />
             </div>
           </div>
         </main>
