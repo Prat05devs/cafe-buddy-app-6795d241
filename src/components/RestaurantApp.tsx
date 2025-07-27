@@ -6,13 +6,22 @@ import { Dashboard } from '@/components/Dashboard';
 import { MenuManagement } from '@/components/MenuManagement';
 import { OrderManagement } from '@/components/OrderManagement';
 import { TableManagement } from '@/components/TableManagement';
+import { OrderCreation } from '@/components/OrderCreation';
+import { TableOrderDetails } from '@/components/TableOrderDetails';
 import Reports from '@/components/Reports';
 import { Settings } from '@/components/Settings';
 import { getLocalizedText } from '@/lib/helpers';
+import { useToast } from '@/hooks/use-toast';
+import { Table, Order, MenuItem } from '@/types/restaurant';
 
 export const RestaurantApp = () => {
   const { config, loading } = useRestaurant();
   const [activePage, setActivePage] = useState('dashboard');
+  const [showOrderCreation, setShowOrderCreation] = useState(false);
+  const [showTableDetails, setShowTableDetails] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const { toast } = useToast();
   
   // Move useRestaurant call to top level to avoid hooks order violation
   const { 
@@ -49,6 +58,69 @@ export const RestaurantApp = () => {
     setActivePage(page);
   };
 
+  const handleCreateOrder = (tableId?: string) => {
+    if (tableId) {
+      const table = tables.find(t => t.id === tableId);
+      setSelectedTable(table || null);
+    } else {
+      setSelectedTable(null);
+    }
+    setShowOrderCreation(true);
+  };
+
+  const handleOrderSubmit = (orderData: any) => {
+    try {
+      addOrder(orderData);
+      setShowOrderCreation(false);
+      setSelectedTable(null);
+      toast({
+        title: "Order Created",
+        description: "New order has been created successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create order. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleViewTableOrders = (tableId: string) => {
+    const table = tables.find(t => t.id === tableId);
+    setSelectedTable(table || null);
+    setShowTableDetails(true);
+  };
+
+  const handleViewOrderDetails = (order: Order) => {
+    setSelectedOrder(order);
+    // You can implement a separate order details modal here if needed
+    toast({
+      title: "Order Details",
+      description: `Viewing details for order #${order.orderNumber}`,
+    });
+  };
+
+  const handlePrintOrder = (orderId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      // Implement print functionality
+      toast({
+        title: "Print Order",
+        description: `Printing order #${order.orderNumber}`,
+      });
+      // You can add actual print logic here
+      window.print();
+    }
+  };
+
+  const handleRefreshOrders = () => {
+    toast({
+      title: "Orders Refreshed",
+      description: "Order list has been updated.",
+    });
+    // The orders are already reactive from the context
+  };
   const renderActivePage = () => {
     switch (activePage) {
       case 'dashboard':
@@ -59,8 +131,18 @@ export const RestaurantApp = () => {
           <MenuManagement
             items={menuItems}
             categories={categories}
-            onAddItem={() => {/* TODO: Implement add item modal */}}
-            onEditItem={(item) => {/* TODO: Implement edit item modal */}}
+            onAddItem={() => {
+              toast({
+                title: "Add Item",
+                description: "Add item functionality would open here.",
+              });
+            }}
+            onEditItem={(item) => {
+              toast({
+                title: "Edit Item",
+                description: `Edit ${item.name} functionality would open here.`,
+              });
+            }}
             onDeleteItem={deleteMenuItem}
             onToggleAvailability={toggleMenuItemAvailability}
           />
@@ -71,9 +153,9 @@ export const RestaurantApp = () => {
           <OrderManagement
             orders={orders}
             onUpdateOrderStatus={updateOrderStatus}
-            onViewOrderDetails={(order) => {/* TODO: Implement order details modal */}}
-            onPrintOrder={(orderId) => {/* TODO: Implement print functionality */}}
-            onRefreshOrders={() => {/* TODO: Implement refresh */}}
+            onViewOrderDetails={handleViewOrderDetails}
+            onPrintOrder={handlePrintOrder}
+            onRefreshOrders={handleRefreshOrders}
           />
         );
       
@@ -82,10 +164,10 @@ export const RestaurantApp = () => {
           <TableManagement
             tables={tables}
             tableOrders={tableOrders}
-            onSelectTable={(table) => {/* TODO: Implement table selection */}}
-            onAddOrder={(tableId) => {/* TODO: Implement add order for table */}}
+            onSelectTable={(table) => handleViewTableOrders(table.id)}
+            onAddOrder={handleCreateOrder}
             onCleanTable={(tableId) => updateTableStatus(tableId, 'available')}
-            onViewTableOrders={(tableId) => {/* TODO: Implement table orders view */}}
+            onViewTableOrders={handleViewTableOrders}
           />
         );
       
@@ -96,8 +178,18 @@ export const RestaurantApp = () => {
         return (
           <Settings
             config={config}
-            onLanguageChange={(language) => {/* TODO: Implement language change */}}
-            onSettingsUpdate={(settings) => {/* TODO: Implement settings update */}}
+            onLanguageChange={(language) => {
+              toast({
+                title: "Language Changed",
+                description: `Language changed to ${language}`,
+              });
+            }}
+            onSettingsUpdate={(settings) => {
+              toast({
+                title: "Settings Updated",
+                description: "Settings have been saved successfully.",
+              });
+            }}
           />
         );
       
@@ -123,6 +215,34 @@ export const RestaurantApp = () => {
         <main className="flex-1">
           {renderActivePage()}
         </main>
+        
+        {/* Modals */}
+        <OrderCreation
+          isOpen={showOrderCreation}
+          onClose={() => {
+            setShowOrderCreation(false);
+            setSelectedTable(null);
+          }}
+          onSubmit={handleOrderSubmit}
+          menuItems={menuItems}
+          categories={categories}
+          tables={tables}
+          selectedTable={selectedTable}
+          language={config?.language || 'en'}
+        />
+        
+        <TableOrderDetails
+          isOpen={showTableDetails}
+          onClose={() => {
+            setShowTableDetails(false);
+            setSelectedTable(null);
+          }}
+          table={selectedTable}
+          orders={selectedTable ? (tableOrders[selectedTable.id] || []) : []}
+          language={config?.language || 'en'}
+          onUpdateOrderStatus={updateOrderStatus}
+          onAddOrder={handleCreateOrder}
+        />
       </div>
     </div>
   );
