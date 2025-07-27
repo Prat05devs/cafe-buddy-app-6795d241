@@ -1,5 +1,5 @@
 export interface RestaurantConfig {
-  restaurantName: string;
+  restaurantName: string | { [key: string]: string };
   logo: string;
   address: string;
   phone: string;

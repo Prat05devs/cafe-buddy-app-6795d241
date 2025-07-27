@@ -1,7 +1,7 @@
 // src/components/Navigation.tsx (Updated Code)
 
 import React from 'react';
-import { motion } from 'framer-motion'; // Import motion
+import { motion } from 'framer-motion';
 import { 
   Home, 
   UtensilsCrossed, 
@@ -46,28 +46,25 @@ export const Navigation: React.FC<NavigationProps> = ({
   });
 
   return (
-    // The outer nav container can keep its original styling
-    <nav className={cn("flex justify-center", className)}>
-      {/* We create a new container for the tabs to get the "pill" shape */}
-      <ul className="flex items-center gap-1 p-2 bg-gradient-glass backdrop-blur-md border border-glass-border rounded-full shadow-medium">
+    <nav className={cn("flex justify-center py-4", className)}>
+      <ul className="flex items-center gap-1 p-2 bg-background/95 backdrop-blur-sm rounded-full shadow-lg">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
           
           return (
-            // Each item is now an `li` element for better semantics
             <li
               key={item.id}
-              onClick={() => onViewChange(item.id)}
+              onClick={() => {
+                console.log('Navigation clicked:', item.id);
+                onViewChange(item.id);
+              }}
               className={cn(
                 "relative flex items-center justify-center gap-2 rounded-full px-3 sm:px-4 py-2 cursor-pointer transition-colors duration-300",
-                // Change text color based on active state for better contrast
-                // Add a hover effect for inactive items
                 isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {/* This is the magic! The animated pill. */}
-              {/* It only renders for the active item, and `layoutId` tells Framer Motion to animate it between items. */}
+              {/* Framer Motion animated pill background */}
               {isActive && (
                 <motion.div
                   layoutId="active-navigation-pill"
@@ -77,10 +74,8 @@ export const Navigation: React.FC<NavigationProps> = ({
                 />
               )}
 
-              {/* The icon and text need a relative z-index to appear ON TOP of the animated pill */}
+              {/* Icon and text with relative z-index to appear above the animated pill */}
               <Icon className="relative z-10 h-4 w-4 sm:h-5 sm:w-5" />
-              
-              {/* Your responsive label logic, simplified into one span */}
               <span className="relative z-10 hidden sm:inline truncate">{item.label}</span>
             </li>
           );

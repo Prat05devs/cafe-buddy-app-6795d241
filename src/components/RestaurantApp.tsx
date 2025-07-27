@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import { Navigation } from './Navigation';
+import { TopBar } from './common/TopBar';
+import { Dashboard } from './Dashboard';
+import { MenuManagement } from './MenuManagement';
+import { OrderManagement } from './OrderManagement';
+import { TableManagement } from './TableManagement';
+import { OrderCreation } from './OrderCreation';
+import { TableOrderDetails } from './TableOrderDetails';
+import Reports from './Reports';
+import { Settings } from './Settings';
 import { useRestaurant } from '@/contexts/RestaurantContext';
-import { TopBar } from '@/components/common/TopBar';
-import { Navigation } from '@/components/Navigation';
-import { Dashboard } from '@/components/Dashboard';
-import { MenuManagement } from '@/components/MenuManagement';
-import { OrderManagement } from '@/components/OrderManagement';
-import { TableManagement } from '@/components/TableManagement';
-import { OrderCreation } from '@/components/OrderCreation';
-import { TableOrderDetails } from '@/components/TableOrderDetails';
-import Reports from '@/components/Reports';
-import { Settings } from '@/components/Settings';
 import { getLocalizedText } from '@/lib/helpers';
 import { useToast } from '@/hooks/use-toast';
 import { Table, Order, MenuItem } from '@/types/restaurant';
@@ -30,16 +30,18 @@ export const RestaurantApp = () => {
     orders, 
     tables, 
     tableOrders,
+    language,
     addMenuItem,
     updateMenuItem,
     deleteMenuItem,
     toggleMenuItemAvailability,
     updateOrderStatus,
     addOrder,
-    updateTableStatus
+    updateTableStatus,
+    setLanguage
   } = useRestaurant();
   
-  const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
+  const restaurantName = config ? getLocalizedText(config.restaurantName, language) : 'Restaurant';
   
   // Show loading screen while data is being loaded
   if (loading) {
@@ -47,8 +49,12 @@ export const RestaurantApp = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <h2 className="text-2xl font-bold mb-2">Loading Restaurant Data...</h2>
-          <p className="text-muted-foreground">Please wait while we set up your restaurant</p>
+          <h2 className="text-2xl font-bold mb-2">
+            {language === 'hi' ? 'रेस्तरां डेटा लोड हो रहा है...' : 'Loading Restaurant Data...'}
+          </h2>
+          <p className="text-muted-foreground">
+            {language === 'hi' ? 'कृपया प्रतीक्षा करें जब तक हम आपका रेस्तरां सेटअप करते हैं' : 'Please wait while we set up your restaurant'}
+          </p>
         </div>
       </div>
     );
@@ -74,13 +80,13 @@ export const RestaurantApp = () => {
       setShowOrderCreation(false);
       setSelectedTable(null);
       toast({
-        title: "Order Created",
-        description: "New order has been created successfully.",
+        title: language === 'hi' ? 'ऑर्डर बनाया गया' : 'Order Created',
+        description: language === 'hi' ? 'नया ऑर्डर सफलतापूर्वक बनाया गया है।' : 'New order has been created successfully.',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create order. Please try again.",
+        title: language === 'hi' ? 'त्रुटि' : 'Error',
+        description: language === 'hi' ? 'ऑर्डर बनाने में विफल। कृपया पुनः प्रयास करें।' : 'Failed to create order. Please try again.',
         variant: "destructive",
       });
     }
@@ -96,8 +102,8 @@ export const RestaurantApp = () => {
     setSelectedOrder(order);
     // You can implement a separate order details modal here if needed
     toast({
-      title: "Order Details",
-      description: `Viewing details for order #${order.orderNumber}`,
+      title: language === 'hi' ? 'ऑर्डर विवरण' : 'Order Details',
+      description: language === 'hi' ? `ऑर्डर #${order.orderNumber} का विवरण देख रहे हैं` : `Viewing details for order #${order.orderNumber}`,
     });
   };
 
@@ -106,8 +112,8 @@ export const RestaurantApp = () => {
     if (order) {
       // Implement print functionality
       toast({
-        title: "Print Order",
-        description: `Printing order #${order.orderNumber}`,
+        title: language === 'hi' ? 'ऑर्डर प्रिंट करें' : 'Print Order',
+        description: language === 'hi' ? `ऑर्डर #${order.orderNumber} प्रिंट हो रहा है` : `Printing order #${order.orderNumber}`,
       });
       // You can add actual print logic here
       window.print();
@@ -116,8 +122,8 @@ export const RestaurantApp = () => {
 
   const handleRefreshOrders = () => {
     toast({
-      title: "Orders Refreshed",
-      description: "Order list has been updated.",
+      title: language === 'hi' ? 'ऑर्डर रीफ्रेश किए गए' : 'Orders Refreshed',
+      description: language === 'hi' ? 'ऑर्डर सूची अपडेट हो गई है।' : 'Order list has been updated.',
     });
     // The orders are already reactive from the context
   };
@@ -133,14 +139,14 @@ export const RestaurantApp = () => {
             categories={categories}
             onAddItem={() => {
               toast({
-                title: "Add Item",
-                description: "Add item functionality would open here.",
+                title: language === 'hi' ? 'आइटम जोड़ें' : 'Add Item',
+                description: language === 'hi' ? 'आइटम जोड़ने की सुविधा यहाँ खुलेगी।' : 'Add item functionality would open here.',
               });
             }}
             onEditItem={(item) => {
               toast({
-                title: "Edit Item",
-                description: `Edit ${item.name} functionality would open here.`,
+                title: language === 'hi' ? 'आइटम संपादित करें' : 'Edit Item',
+                description: language === 'hi' ? `${item.name} संपादित करने की सुविधा यहाँ खुलेगी।` : `Edit ${item.name} functionality would open here.`,
               });
             }}
             onDeleteItem={deleteMenuItem}
@@ -178,16 +184,18 @@ export const RestaurantApp = () => {
         return (
           <Settings
             config={config}
-            onLanguageChange={(language) => {
+            language={language}
+            onLanguageChange={(newLanguage) => {
+              setLanguage(newLanguage);
               toast({
-                title: "Language Changed",
-                description: `Language changed to ${language}`,
+                title: newLanguage === 'hi' ? 'भाषा बदली गई' : 'Language Changed',
+                description: newLanguage === 'hi' ? `भाषा हिंदी में बदल दी गई` : `Language changed to English`,
               });
             }}
             onSettingsUpdate={(settings) => {
               toast({
-                title: "Settings Updated",
-                description: "Settings have been saved successfully.",
+                title: language === 'hi' ? 'सेटिंग्स अपडेट हुईं' : 'Settings Updated',
+                description: language === 'hi' ? 'सेटिंग्स सफलतापूर्वक सेव हो गई हैं' : 'Settings have been saved successfully.',
               });
             }}
           />
@@ -209,7 +217,7 @@ export const RestaurantApp = () => {
           currentView={activePage}
           onViewChange={handleNavigate}
           config={config}
-          className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b"
+          className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
         />
         
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -230,7 +238,7 @@ export const RestaurantApp = () => {
           categories={categories}
           tables={tables}
           selectedTable={selectedTable}
-          language={config?.language || 'en'}
+          language={language}
         />
         
         <TableOrderDetails
@@ -241,7 +249,7 @@ export const RestaurantApp = () => {
           }}
           table={selectedTable}
           orders={selectedTable ? (tableOrders[selectedTable.id] || []) : []}
-          language={config?.language || 'en'}
+          language={language}
           onUpdateOrderStatus={updateOrderStatus}
           onAddOrder={handleCreateOrder}
         />

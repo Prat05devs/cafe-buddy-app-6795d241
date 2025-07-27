@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useTheme } from '@/contexts/ThemeContext';
-import { Sun, Moon, Menu } from 'lucide-react';
+import { useRestaurant } from '@/contexts/RestaurantContext';
+import { Sun, Moon, Menu, Languages } from 'lucide-react';
 import { RestaurantConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
 import { getLocalizedText } from '@/lib/helpers';
@@ -20,11 +21,17 @@ export const TopBar = ({
   userRole
 }: TopBarProps) => {
   const { theme, setTheme, isDarkMode } = useTheme();
+  const { language, setLanguage } = useRestaurant();
   
-  const restaurantName = getLocalizedText(config.restaurantName, config.language || 'en');
+  const restaurantName = getLocalizedText(config.restaurantName, language);
   
   const toggleTheme = () => {
     setTheme(isDarkMode ? 'light' : 'dark');
+  };
+
+  const toggleLanguage = () => {
+    const newLanguage = language === 'en' ? 'hi' : 'en';
+    setLanguage(newLanguage);
   };
   
   return (
@@ -64,6 +71,22 @@ export const TopBar = ({
         
         {/* Right side */}
         <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          {/* Language Toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleLanguage}
+            className="rounded-full h-8 w-8 sm:h-10 sm:w-10"
+            title={language === 'en' ? 'Switch to Hindi' : 'Switch to English'}
+          >
+            <div className="flex items-center justify-center">
+              <span className="text-xs sm:text-sm font-bold">
+                {language === 'en' ? 'हि' : 'En'}
+              </span>
+            </div>
+          </Button>
+
+          {/* Theme Toggle */}
           <Button 
             variant="ghost" 
             size="icon" 

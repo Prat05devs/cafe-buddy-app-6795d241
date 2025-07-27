@@ -9,360 +9,53 @@ import {
 } from '@/types/restaurant';
 import { loadConfig, RestaurantConfig } from '@/lib/config';
 
-// Mock data for demonstration
-const mockCategories: Category[] = [
-  { id: 'starters', name: 'Starters', displayOrder: 1, icon: '🥗' },
-  { id: 'main-course', name: 'Main Course', displayOrder: 2, icon: '🍽️' },
-  { id: 'beverages', name: 'Beverages', displayOrder: 3, icon: '🥤' },
-  { id: 'desserts', name: 'Desserts', displayOrder: 4, icon: '🍰' },
-];
-
-const mockMenuItems: MenuItem[] = [
-  {
-    id: '1',
-    name: 'Paneer Butter Masala',
-    description: 'Creamy tomato-based curry with cottage cheese cubes',
-    price: 24,
-    category: 'main-course',
-    available: true,
-    ingredients: ['paneer', 'tomatoes', 'cream', 'spices'],
-    allergens: ['dairy'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Chana Masala',
-    description: 'Spiced chickpea curry',
-    price: 22,
-    category: 'main-course',
-    available: true,
-    ingredients: ['chickpeas', 'onions', 'tomatoes', 'spices'],
-    allergens: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Mix Vegetable Jalfrezi',
-    description: 'Stir-fried mixed vegetables in tangy sauce',
-    price: 28,
-    category: 'main-course',
-    available: true,
-    ingredients: ['mixed vegetables', 'bell peppers', 'onions', 'tomatoes'],
-    allergens: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '4',
-    name: 'Thai Curry Green',
-    description: 'Aromatic green curry with vegetables',
-    price: 22,
-    category: 'main-course',
-    available: true,
-    ingredients: ['coconut milk', 'green curry paste', 'vegetables'],
-    allergens: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '5',
-    name: 'Marwadi Kofte',
-    description: 'Traditional Rajasthani vegetable dumplings in curry',
-    price: 18,
-    category: 'main-course',
-    available: true,
-    ingredients: ['mixed vegetables', 'gram flour', 'yogurt', 'spices'],
-    allergens: ['dairy'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '6',
-    name: 'Spinach Cheese Grilled',
-    description: 'Grilled sandwich with spinach and cheese',
-    price: 10,
-    category: 'starters',
-    available: true,
-    ingredients: ['bread', 'spinach', 'cheese', 'butter'],
-    allergens: ['gluten', 'dairy'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '7',
-    name: 'Paneer Kadhi Roll',
-    description: 'Rolled paratha with spiced paneer',
-    price: 10,
-    category: 'starters',
-    available: true,
-    ingredients: ['paratha', 'paneer', 'onions', 'chutneys'],
-    allergens: ['gluten', 'dairy'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '8',
-    name: 'Dal Tadka',
-    description: 'Tempered yellow lentils',
-    price: 8,
-    category: 'main-course',
-    available: false,
-    ingredients: ['lentils', 'onions', 'tomatoes', 'ghee', 'spices'],
-    allergens: ['dairy'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '9',
-    name: 'Dal Panchmel',
-    description: 'Mixed five lentil curry',
-    price: 10,
-    category: 'main-course',
-    available: true,
-    ingredients: ['mixed lentils', 'onions', 'tomatoes', 'spices'],
-    allergens: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
-const mockTables: Table[] = Array.from({ length: 12 }, (_, i) => ({
-  id: `table-${i + 1}`,
-  number: `${i + 1}`,
-  capacity: [2, 4, 6][i % 3],
-  status: ['available', 'occupied', 'reserved', 'cleaning'][Math.floor(Math.random() * 4)] as Table['status'],
-  floor: i < 6 ? 'Ground Floor' : '1st Floor',
-  position: { x: (i % 4) * 100, y: Math.floor(i / 4) * 100 },
-}));
-
-const mockOrders: Order[] = [
-  {
-    id: 'order-1',
-    orderNumber: 'ORD001',
-    tableId: 'table-1',
-    table: mockTables[0],
-    type: 'dine-in',
-    status: 'served',
-    items: [
-      {
-        id: 'item-1',
-        menuItemId: '1',
-        menuItem: mockMenuItems[0],
-        quantity: 2,
-        price: 24,
-        totalPrice: 48,
-        specialInstructions: 'Less spicy'
-      }
-    ],
-    subtotal: 48,
-    tax: 4.8,
-    discount: 0,
-    total: 52.8,
-    paymentStatus: 'paid',
-    paymentMethod: 'cash',
-    createdAt: new Date(Date.now() - 3 * 60 * 60000), // 3 hours ago
-    updatedAt: new Date(),
-    servedAt: new Date(Date.now() - 2.5 * 60 * 60000),
-  },
-  {
-    id: 'order-2',
-    orderNumber: 'ORD002',
-    tableId: 'table-3',
-    table: mockTables[2],
-    type: 'dine-in',
-    status: 'served',
-    items: [
-      {
-        id: 'item-2',
-        menuItemId: '2',
-        menuItem: mockMenuItems[1],
-        quantity: 1,
-        price: 22,
-        totalPrice: 22,
-      },
-      {
-        id: 'item-3',
-        menuItemId: '6',
-        menuItem: mockMenuItems[5],
-        quantity: 2,
-        price: 10,
-        totalPrice: 20,
-      }
-    ],
-    subtotal: 42,
-    tax: 4.2,
-    discount: 2,
-    total: 44.2,
-    paymentStatus: 'paid',
-    paymentMethod: 'upi',
-    createdAt: new Date(Date.now() - 2 * 60 * 60000), // 2 hours ago
-    updatedAt: new Date(),
-    servedAt: new Date(Date.now() - 1.5 * 60 * 60000),
-  },
-  {
-    id: 'order-3',
-    orderNumber: 'ORD003',
-    tableId: 'table-5',
-    table: mockTables[4],
-    type: 'dine-in',
-    status: 'served',
-    items: [
-      {
-        id: 'item-4',
-        menuItemId: '3',
-        menuItem: mockMenuItems[2],
-        quantity: 1,
-        price: 28,
-        totalPrice: 28,
-      },
-      {
-        id: 'item-5',
-        menuItemId: '4',
-        menuItem: mockMenuItems[3],
-        quantity: 2,
-        price: 22,
-        totalPrice: 44,
-      }
-    ],
-    subtotal: 72,
-    tax: 7.2,
-    discount: 5,
-    total: 74.2,
-    paymentStatus: 'paid',
-    paymentMethod: 'card',
-    createdAt: new Date(Date.now() - 4 * 60 * 60000), // 4 hours ago
-    updatedAt: new Date(),
-    servedAt: new Date(Date.now() - 3.5 * 60 * 60000),
-  },
-  {
-    id: 'order-4',
-    orderNumber: 'ORD004',
-    tableId: 'table-2',
-    table: mockTables[1],
-    type: 'takeaway',
-    status: 'served',
-    items: [
-      {
-        id: 'item-6',
-        menuItemId: '5',
-        menuItem: mockMenuItems[4],
-        quantity: 3,
-        price: 18,
-        totalPrice: 54,
-      }
-    ],
-    subtotal: 54,
-    tax: 5.4,
-    discount: 0,
-    total: 59.4,
-    paymentStatus: 'paid',
-    paymentMethod: 'cash',
-    createdAt: new Date(Date.now() - 5 * 60 * 60000), // 5 hours ago
-    updatedAt: new Date(),
-    servedAt: new Date(Date.now() - 4.5 * 60 * 60000),
-  },
-  {
-    id: 'order-5',
-    orderNumber: 'ORD005',
-    tableId: 'table-6',
-    table: mockTables[5],
-    type: 'dine-in',
-    status: 'served',
-    items: [
-      {
-        id: 'item-7',
-        menuItemId: '1',
-        menuItem: mockMenuItems[0],
-        quantity: 1,
-        price: 24,
-        totalPrice: 24,
-      },
-      {
-        id: 'item-8',
-        menuItemId: '7',
-        menuItem: mockMenuItems[6],
-        quantity: 2,
-        price: 10,
-        totalPrice: 20,
-      }
-    ],
-    subtotal: 44,
-    tax: 4.4,
-    discount: 0,
-    total: 48.4,
-    paymentStatus: 'paid',
-    paymentMethod: 'upi',
-    createdAt: new Date(Date.now() - 24 * 60 * 60000), // Yesterday
-    updatedAt: new Date(Date.now() - 23.5 * 60 * 60000),
-    servedAt: new Date(Date.now() - 23 * 60 * 60000),
-  },
-  {
-    id: 'order-6',
-    orderNumber: 'ORD006',
-    tableId: 'table-4',
-    table: mockTables[3],
-    type: 'dine-in',
-    status: 'preparing',
-    items: [
-      {
-        id: 'item-9',
-        menuItemId: '2',
-        menuItem: mockMenuItems[1],
-        quantity: 2,
-        price: 22,
-        totalPrice: 44,
-      }
-    ],
-    subtotal: 44,
-    tax: 4.4,
-    discount: 0,
-    total: 48.4,
-    paymentStatus: 'pending',
-    createdAt: new Date(Date.now() - 15 * 60000), // 15 minutes ago
-    updatedAt: new Date(),
-  },
-  {
-    id: 'order-7',
-    orderNumber: 'ORD007',
-    tableId: 'table-7',
-    table: mockTables[6],
-    type: 'dine-in',
-    status: 'ready',
-    items: [
-      {
-        id: 'item-10',
-        menuItemId: '3',
-        menuItem: mockMenuItems[2],
-        quantity: 1,
-        price: 28,
-        totalPrice: 28,
-      }
-    ],
-    subtotal: 28,
-    tax: 2.8,
-    discount: 0,
-    total: 30.8,
-    paymentStatus: 'pending',
-    createdAt: new Date(Date.now() - 25 * 60000), // 25 minutes ago
-    updatedAt: new Date(),
-  }
-];
-
 export const useRestaurantData = () => {
   const [config, setConfig] = useState<RestaurantConfig | null>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [language, setLanguage] = useState('en');
+  const [rawMenuItems, setRawMenuItems] = useState<any[]>([]);
+  const [rawCategories, setRawCategories] = useState<any[]>([]);
+
+  // Helper function to get localized text
+  const getLocalizedText = (textObj: any, lang: string = language): string => {
+    if (typeof textObj === 'string') return textObj;
+    if (typeof textObj === 'object' && textObj !== null) {
+      return textObj[lang] || textObj['en'] || textObj[Object.keys(textObj)[0]] || '';
+    }
+    return '';
+  };
+
+  // Computed values that update when language changes
+  const categories = rawCategories.map(cat => ({
+    id: cat.id,
+    name: getLocalizedText(cat.name),
+    displayOrder: cat.order,
+    icon: cat.icon
+  }));
+
+  const menuItems = rawMenuItems.map(item => ({
+    id: item.id.toString(),
+    name: getLocalizedText(item.name),
+    description: getLocalizedText(item.description),
+    price: item.price,
+    category: item.category.toLowerCase().replace(/\s+/g, '-'),
+    available: item.available,
+    imageUrl: item.image,
+    ingredients: item.ingredients || [],
+    allergens: item.allergens || [],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }));
+
   // Create restaurant object from config
   const [restaurant, setRestaurant] = useState<Restaurant>({
     id: 'rest-1',
-    name: 'DashPOS Restaurant',
-    address: '123 Main Street, City',
-    phone: '+91 98765 43210',
-    email: 'contact@restaurant.com',
-    taxRate: 10,
-    currency: '₹',
+    name: 'Restaurant',
+    address: '',
+    phone: '',
+    email: '',
+    taxRate: 0,
+    currency: '$',
     settings: {
       enableTableManagement: true,
       enableInventory: true,
@@ -373,28 +66,33 @@ export const useRestaurantData = () => {
     }
   });
 
-  // Transform categories from config format to app format
-  const [categories, setCategories] = useState(mockCategories);
+  // Transform tables from config format to app format - will be populated from data.json
+  const [tables, setTables] = useState<Table[]>([]);
   
-  // Transform menu items from config format to app format
-  const [menuItems, setMenuItems] = useState(mockMenuItems);
-  
-  // Transform tables from config format to app format
-  const [tables, setTables] = useState(mockTables);
-  
-  const [orders, setOrders] = useState(mockOrders);
-
-  // Load config from data.json on component mount
+  // Orders will be managed dynamically (not from data.json)
+  const [orders, setOrders] = useState<Order[]>([]);  // Load config from data.json on component mount
   useEffect(() => {
     const fetchConfig = async () => {
       try {
+        // Check for stored language preference first
+        const storedLanguage = localStorage.getItem('preferredLanguage');
+        if (storedLanguage) {
+          setLanguage(storedLanguage);
+        }
+
         const configData = await loadConfig();
         setConfig(configData);
+        
+        // Use stored language preference or config language
+        const finalLanguage = storedLanguage || configData.language || 'en';
+        setLanguage(finalLanguage);
         
         // Update restaurant info
         setRestaurant({
           id: 'rest-1',
-          name: configData.restaurantName,
+          name: typeof configData.restaurantName === 'string' 
+            ? configData.restaurantName 
+            : getLocalizedText(configData.restaurantName, finalLanguage),
           address: configData.address,
           phone: configData.phone,
           email: configData.email,
@@ -405,33 +103,16 @@ export const useRestaurantData = () => {
             enableInventory: configData.features.inventory,
             autoCalculateTax: configData.settings.autoCalculateTax,
             defaultPaymentMethod: configData.settings.defaultPaymentMethod,
-            language: configData.language,
+            language: finalLanguage,
             theme: configData.theme as 'light' | 'dark' | 'auto'
           }
         });
         
-        // Transform categories
-        setCategories(configData.categories.map(cat => ({
-          id: cat.id,
-          name: typeof cat.name === 'string' ? cat.name : (cat.name as any)?.en || cat.name || 'Unnamed Category',
-          displayOrder: cat.order,
-          icon: cat.icon
-        })));
+        // Set initial language - removed duplicate line since we already set it above
         
-        // Transform menu items
-        setMenuItems(configData.menu.map(item => ({
-          id: item.id.toString(),
-          name: typeof item.name === 'string' ? item.name : (item.name as any)?.en || 'Unnamed Item',
-          description: typeof item.description === 'string' ? item.description : (item.description as any)?.en || '',
-          price: item.price,
-          category: item.category.toLowerCase().replace(/\s+/g, '-'),
-          available: item.available,
-          imageUrl: item.image,
-          ingredients: (item as any).ingredients || [],
-          allergens: (item as any).allergens || [],
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })));
+        // Store raw categories and menu items for localization
+        setRawCategories(configData.categories || []);
+        setRawMenuItems(configData.menu || []);
         
         // Transform tables from config data
         if (configData.tables) {
@@ -495,6 +176,8 @@ export const useRestaurantData = () => {
         };
         
         setConfig(fallbackConfig);
+        setRawCategories([]);
+        setRawMenuItems([]);
         setLoading(false);
       }
     };
@@ -528,31 +211,46 @@ export const useRestaurantData = () => {
 
   // Menu management functions
   const addMenuItem = (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newItem: MenuItem = {
-      ...item,
-      id: `item-${Date.now()}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    const newItem = {
+      id: Date.now(),
+      name: { en: item.name },
+      description: { en: item.description },
+      price: item.price,
+      category: item.category,
+      available: item.available,
+      image: item.imageUrl,
+      ingredients: item.ingredients,
+      allergens: item.allergens,
     };
-    setMenuItems(prev => [...prev, newItem]);
+    setRawMenuItems(prev => [...prev, newItem]);
   };
 
   const updateMenuItem = (id: string, updates: Partial<MenuItem>) => {
-    setMenuItems(prev => prev.map(item => 
-      item.id === id 
-        ? { ...item, ...updates, updatedAt: new Date() }
+    setRawMenuItems(prev => prev.map(item => 
+      item.id.toString() === id 
+        ? { 
+            ...item, 
+            ...(updates.name && { name: { en: updates.name } }),
+            ...(updates.description && { description: { en: updates.description } }),
+            ...(updates.price && { price: updates.price }),
+            ...(updates.category && { category: updates.category }),
+            ...(updates.available !== undefined && { available: updates.available }),
+            ...(updates.imageUrl && { image: updates.imageUrl }),
+            ...(updates.ingredients && { ingredients: updates.ingredients }),
+            ...(updates.allergens && { allergens: updates.allergens }),
+          }
         : item
     ));
   };
 
   const deleteMenuItem = (id: string) => {
-    setMenuItems(prev => prev.filter(item => item.id !== id));
+    setRawMenuItems(prev => prev.filter(item => item.id.toString() !== id));
   };
 
   const toggleMenuItemAvailability = (id: string) => {
-    setMenuItems(prev => prev.map(item =>
-      item.id === id
-        ? { ...item, available: !item.available, updatedAt: new Date() }
+    setRawMenuItems(prev => prev.map(item =>
+      item.id.toString() === id
+        ? { ...item, available: !item.available }
         : item
     ));
   };
@@ -577,6 +275,26 @@ export const useRestaurantData = () => {
     setOrders(prev => [...prev, newOrder]);
   };
 
+  // Language management function
+  const updateLanguage = (newLanguage: string) => {
+    setLanguage(newLanguage);
+    // Update config state as well
+    if (config) {
+      setConfig(prev => prev ? { ...prev, language: newLanguage } : null);
+    }
+    // Update restaurant settings
+    setRestaurant(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        language: newLanguage
+      }
+    }));
+    
+    // Store language preference in localStorage for persistence
+    localStorage.setItem('preferredLanguage', newLanguage);
+  };
+
   // Table management functions
   const updateTableStatus = (tableId: string, status: Table['status']) => {
     setTables(prev => prev.map(table =>
@@ -596,6 +314,7 @@ export const useRestaurantData = () => {
     tableOrders,
     loading,
     config,
+    language,
     // Actions
     addMenuItem,
     updateMenuItem,
@@ -604,5 +323,6 @@ export const useRestaurantData = () => {
     updateOrderStatus,
     addOrder,
     updateTableStatus,
+    setLanguage: updateLanguage,
   };
 };

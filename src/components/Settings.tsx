@@ -11,28 +11,37 @@ import { RestaurantConfig } from '@/lib/config';
 
 interface SettingsProps {
   config: RestaurantConfig;
+  language: string;
   onLanguageChange: (language: string) => void;
   onSettingsUpdate: (settings: Partial<RestaurantConfig>) => void;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
   config,
+  language,
   onLanguageChange,
   onSettingsUpdate
 }) => {
   const { toast } = useToast();
-  const [language, setLanguage] = useState(config.language || 'en');
   const [autoCalculateTax, setAutoCalculateTax] = useState<boolean>(config.settings?.autoCalculateTax || true);
   const [soundNotifications, setSoundNotifications] = useState(config.settings?.soundNotifications || false);
   const [printBillAutomatically, setPrintBillAutomatically] = useState(config.settings?.printBillAutomatically || false);
   const [defaultPaymentMethod, setDefaultPaymentMethod] = useState(config.settings?.defaultPaymentMethod || 'cash');
 
+  // Helper function to get localized text
+  const getLocalizedText = (textObj: any, lang: string = language): string => {
+    if (typeof textObj === 'string') return textObj;
+    if (typeof textObj === 'object' && textObj !== null) {
+      return textObj[lang] || textObj['en'] || textObj[Object.keys(textObj)[0]] || '';
+    }
+    return '';
+  };
+
   const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage);
     onLanguageChange(newLanguage);
     toast({
-      title: language === 'hi' ? 'भाषा बदली गई' : 'Language Changed',
-      description: language === 'hi' ? `भाषा ${newLanguage === 'hi' ? 'हिंदी' : 'अंग्रेजी'} में बदल दी गई` : `Language changed to ${newLanguage === 'hi' ? 'Hindi' : 'English'}`,
+      title: newLanguage === 'hi' ? 'भाषा बदली गई' : 'Language Changed',
+      description: newLanguage === 'hi' ? `भाषा हिंदी में बदल दी गई` : `Language changed to English`,
     });
   };
 
@@ -104,7 +113,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label className="text-sm">{language === 'hi' ? 'रेस्तरां का नाम' : 'Restaurant Name'}</Label>
-                <Input value={config.restaurantName} disabled className="text-sm" />
+                <Input value={getLocalizedText(config.restaurantName)} disabled className="text-sm" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm">{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</Label>

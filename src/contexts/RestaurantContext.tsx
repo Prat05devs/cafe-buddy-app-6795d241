@@ -14,6 +14,7 @@ interface RestaurantContextType {
   tableOrders: Record<string, Order[]>;
   loading: boolean;
   config: RestaurantConfig | null;
+  language: string;
   // Actions
   addMenuItem: (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateMenuItem: (id: string, updates: Partial<MenuItem>) => void;
@@ -22,6 +23,7 @@ interface RestaurantContextType {
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   addOrder: (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => void;
   updateTableStatus: (tableId: string, status: Table['status']) => void;
+  setLanguage: (language: string) => void;
 }
 
 // Create context
