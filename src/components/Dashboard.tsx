@@ -10,7 +10,7 @@ interface DashboardProps {
 }
 
 export const Dashboard = ({ onNavigate }: DashboardProps) => {
-  const { config, orders, menuItems } = useRestaurant();
+  const { config, orders, menuItems, tables, dashboardStats } = useRestaurant();
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
@@ -81,14 +81,14 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
   });
   const weekSales = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
 
-  // Real-time stats from actual orders data
+  // Use calculated dashboard stats from the context
   const stats = {
     todaySales: todaySales,
     weekSales: weekSales,
     pendingOrders: pendingOrders.length,
     completedOrders: completedOrders.length,
-    availableTables: 8, // This would come from table management
-    totalTables: 12
+    availableTables: dashboardStats.availableTables,
+    totalTables: dashboardStats.totalTables
   };
 
   // Calculate top selling items from real order data
@@ -122,20 +122,19 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
   })();
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome to {restaurantName} management system
-          </p>
-        </div>
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Welcome to {restaurantName} management system
+        </p>
+      </div>
         
         {/* Stats */}
         <DashboardStats config={activeConfig} stats={stats} />
         
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <RecentOrders 
             config={activeConfig} 
             orders={orders.slice(0, 5)} 
@@ -143,7 +142,6 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
           />
           
           <TopSellingItems config={activeConfig} items={topSellingItems} />
-        </div>
       </div>
     </div>
   );

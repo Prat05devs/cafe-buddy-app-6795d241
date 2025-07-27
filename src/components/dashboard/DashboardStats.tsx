@@ -89,7 +89,7 @@ interface DashboardStatsProps {
 
 export const DashboardStats = ({ config, stats }: DashboardStatsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
       <StatCard
         title="Today's Sales"
         value={formatCurrency(stats.todaySales, config)}
