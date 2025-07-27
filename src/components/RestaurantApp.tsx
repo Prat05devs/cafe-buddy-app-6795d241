@@ -14,6 +14,22 @@ export const RestaurantApp = () => {
   const { config, loading } = useRestaurant();
   const [activePage, setActivePage] = useState('dashboard');
   
+  // Move useRestaurant call to top level to avoid hooks order violation
+  const { 
+    menuItems, 
+    categories, 
+    orders, 
+    tables, 
+    tableOrders,
+    addMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+    toggleMenuItemAvailability,
+    updateOrderStatus,
+    addOrder,
+    updateTableStatus
+  } = useRestaurant();
+  
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
   // Show loading screen while data is being loaded
@@ -34,21 +50,6 @@ export const RestaurantApp = () => {
   };
 
   const renderActivePage = () => {
-    const { 
-      menuItems, 
-      categories, 
-      orders, 
-      tables, 
-      tableOrders,
-      addMenuItem,
-      updateMenuItem,
-      deleteMenuItem,
-      toggleMenuItemAvailability,
-      updateOrderStatus,
-      addOrder,
-      updateTableStatus
-    } = useRestaurant();
-
     switch (activePage) {
       case 'dashboard':
         return <Dashboard onNavigate={handleNavigate} />;
