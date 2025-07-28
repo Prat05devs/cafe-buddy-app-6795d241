@@ -259,7 +259,13 @@ export const useRestaurantData = () => {
   const updateOrderStatus = (orderId: string, status: Order['status']) => {
     setOrders(prev => prev.map(order =>
       order.id === orderId
-        ? { ...order, status, updatedAt: new Date() }
+        ? { 
+            ...order, 
+            status, 
+            // Automatically mark as paid when served (for dashboard earnings calculation)
+            paymentStatus: status === 'served' ? 'paid' : order.paymentStatus,
+            updatedAt: new Date() 
+          }
         : order
     ));
   };
@@ -278,21 +284,12 @@ export const useRestaurantData = () => {
   // Language management function
   const updateLanguage = (newLanguage: string) => {
     setLanguage(newLanguage);
-    // Update config state as well
-    if (config) {
-      setConfig(prev => prev ? { ...prev, language: newLanguage } : null);
-    }
-    // Update restaurant settings
-    setRestaurant(prev => ({
-      ...prev,
-      settings: {
-        ...prev.settings,
-        language: newLanguage
-      }
-    }));
-    
-    // Store language preference in localStorage for persistence
     localStorage.setItem('preferredLanguage', newLanguage);
+  };
+
+  // Clear any problematic orders - useful for debugging
+  const clearOrders = () => {
+    setOrders([]);
   };
 
   // Table management functions
@@ -324,5 +321,6 @@ export const useRestaurantData = () => {
     addOrder,
     updateTableStatus,
     setLanguage: updateLanguage,
+    clearOrders, // Add for debugging
   };
 };

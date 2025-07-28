@@ -1,5 +1,5 @@
 {
-  "restaurantName": "Cafe Sunrise",
+  "restaurantName": "Kulcha Ram",
   "logo": "/assets/cafe_logo.png",
   "address": "123 Main Street, Downtown",
   "phone": "+91 98765 43210",
@@ -503,10 +503,8 @@
       "name": "T5", 
       "capacity": 4, 
       "floor": "First", 
-      "status": "reserved", 
+      "status": "available", 
       "position": { "x": 250, "y": 250 },
-      "reservedFor": "Rohit Sharma",
-      "reservationTime": "2024-07-22T19:30:00Z",
       "shape": "rectangle",
       "createdAt": "2023-06-01T09:20:00Z",
       "updatedAt": "2024-07-21T14:15:00Z"

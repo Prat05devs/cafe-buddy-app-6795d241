@@ -15,6 +15,7 @@ import {
   Search
 } from 'lucide-react';
 import { Order, OrderItem } from '@/types/restaurant';
+import { getLocalizedText } from '@/lib/helpers';
 
 interface OrderManagementProps {
   orders: Order[];
@@ -22,6 +23,7 @@ interface OrderManagementProps {
   onViewOrderDetails: (order: Order) => void;
   onPrintOrder: (orderId: string) => void;
   onRefreshOrders: () => void;
+  language?: string;
 }
 
 export const OrderManagement: React.FC<OrderManagementProps> = ({
@@ -29,7 +31,8 @@ export const OrderManagement: React.FC<OrderManagementProps> = ({
   onUpdateOrderStatus,
   onViewOrderDetails,
   onPrintOrder,
-  onRefreshOrders
+  onRefreshOrders,
+  language = 'en'
 }) => {
   const [selectedTab, setSelectedTab] = useState('all');
 
@@ -94,6 +97,7 @@ export const OrderManagement: React.FC<OrderManagementProps> = ({
                 onUpdateStatus={onUpdateOrderStatus}
                 onViewDetails={onViewOrderDetails}
                 onPrintOrder={onPrintOrder}
+                language={language}
               />
             </TabsContent>
           ))}
@@ -108,13 +112,15 @@ interface OrderListProps {
   onUpdateStatus: (orderId: string, status: Order['status']) => void;
   onViewDetails: (order: Order) => void;
   onPrintOrder: (orderId: string) => void;
+  language: string;
 }
 
 const OrderList: React.FC<OrderListProps> = ({
   orders,
   onUpdateStatus,
   onViewDetails,
-  onPrintOrder
+  onPrintOrder,
+  language
 }) => {
   if (orders.length === 0) {
     return (
@@ -136,6 +142,7 @@ const OrderList: React.FC<OrderListProps> = ({
           onUpdateStatus={onUpdateStatus}
           onViewDetails={onViewDetails}
           onPrintOrder={onPrintOrder}
+          language={language}
         />
       ))}
     </div>
@@ -147,15 +154,20 @@ interface OrderCardProps {
   onUpdateStatus: (orderId: string, status: Order['status']) => void;
   onViewDetails: (order: Order) => void;
   onPrintOrder: (orderId: string) => void;
+  language: string;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onUpdateStatus,
   onViewDetails,
-  onPrintOrder
+  onPrintOrder,
+  language
 }) => {
   const getNextStatus = (currentStatus: Order['status']): Order['status'] | null => {
+    // Add safety check for undefined status
+    if (!currentStatus) return 'pending';
+    
     const statusFlow: Record<Order['status'], Order['status'] | null> = {
       'pending': 'preparing',
       'preparing': 'ready',
@@ -178,8 +190,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
   };
 
   const nextStatus = getNextStatus(order.status);
-  const timeSinceCreated = Date.now() - new Date(order.createdAt).getTime();
+  const timeSinceCreated = Date.now() - new Date(order.createdAt || new Date()).getTime();
   const minutesAgo = Math.floor(timeSinceCreated / 60000);
+
+  // Safety checks for order data
+  const safeOrder = {
+    ...order,
+    status: order.status || 'pending',
+    customerName: order.customerName || 'Unknown',
+    total: order.total || 0,
+    paymentStatus: order.paymentStatus || 'pending',
+    items: order.items || []
+  };
 
   return (
     <Card className="bg-gradient-glass backdrop-blur-md border-glass-border p-3 sm:p-6 hover:shadow-medium transition-all duration-300">
@@ -188,13 +210,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <div className="flex-1">
           <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-3">
             <div className="bg-gradient-primary p-2 rounded-lg text-primary-foreground font-bold text-sm">
-              #{order.orderNumber}
+              #{order.orderNumber || 'N/A'}
             </div>
-            <Badge variant={getStatusColor(order.status)} className="text-xs">
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            <Badge variant={getStatusColor(safeOrder.status)} className="text-xs">
+              {safeOrder.status.charAt(0).toUpperCase() + safeOrder.status.slice(1)}
             </Badge>
             <Badge variant="outline" className="text-xs">
-              {order.type.charAt(0).toUpperCase() + order.type.slice(1)}
+              {order.type?.charAt(0).toUpperCase() + order.type?.slice(1) || 'Unknown'}
             </Badge>
             {order.table && (
               <Badge variant="secondary" className="text-xs">
@@ -205,28 +227,28 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
           <div className="text-xs sm:text-sm text-muted-foreground mb-2">
             <span>{minutesAgo} minutes ago</span>
-            {order.customerName && <span> • {order.customerName}</span>}
+            {safeOrder.customerName && safeOrder.customerName !== 'Unknown' && <span> • {safeOrder.customerName}</span>}
             {order.customerPhone && <span className="hidden sm:inline"> • {order.customerPhone}</span>}
           </div>
 
           <div className="space-y-1">
-            {order.items.slice(0, 3).map(item => (
-              <div key={item.id} className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="truncate">{item.quantity}x {item.menuItem.name}</span>
-                <span className="text-muted-foreground">₹{item.totalPrice}</span>
+            {safeOrder.items.slice(0, 3).map((item, index) => (
+              <div key={item.id || index} className="flex items-center justify-between text-xs sm:text-sm">
+                <span className="truncate">{item.quantity || 1}x {getLocalizedText(item.menuItem?.name || 'Unknown Item', language)}</span>
+                <span className="text-muted-foreground">₹{item.totalPrice || 0}</span>
               </div>
             ))}
-            {order.items.length > 3 && (
+            {safeOrder.items.length > 3 && (
               <div className="text-xs text-muted-foreground">
-                +{order.items.length - 3} more items
+                +{safeOrder.items.length - 3} more items
               </div>
             )}
           </div>
 
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-            <span className="font-semibold text-sm sm:text-base">Total: ₹{order.total}</span>
-            <Badge variant={order.paymentStatus === 'paid' ? 'success' : 'warning'} className="text-xs">
-              {order.paymentStatus}
+            <span className="font-semibold text-sm sm:text-base">Total: ₹{safeOrder.total}</span>
+            <Badge variant={safeOrder.paymentStatus === 'paid' ? 'success' : 'warning'} className="text-xs">
+              {safeOrder.paymentStatus}
             </Badge>
           </div>
         </div>
@@ -239,9 +261,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
               onClick={() => onUpdateStatus(order.id, nextStatus)}
               className="flex-1 text-xs sm:text-sm"
             >
-              {nextStatus === 'preparing' && 'Start Preparing'}
-              {nextStatus === 'ready' && 'Mark Ready'}
-              {nextStatus === 'served' && 'Mark Served'}
+              {nextStatus === 'preparing' && (language === 'hi' ? 'तैयारी शुरू करें' : 'Start Preparing')}
+              {nextStatus === 'ready' && (language === 'hi' ? 'तैयार के रूप में चिह्नित करें' : 'Mark Ready')}
+              {nextStatus === 'served' && (language === 'hi' ? 'परोसा के रूप में चिह्नित करें' : 'Mark Served')}
             </Button>
           )}
           
@@ -253,7 +275,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               className="flex-1 sm:flex-none"
             >
               <Eye className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">View</span>
+              <span className="hidden sm:inline">{language === 'hi' ? 'देखें' : 'View'}</span>
             </Button>
             <Button
               variant="outline"
@@ -262,7 +284,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               className="flex-1 sm:flex-none"
             >
               <Printer className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Print</span>
+              <span className="hidden sm:inline">{language === 'hi' ? 'प्रिंट' : 'Print'}</span>
             </Button>
           </div>
         </div>

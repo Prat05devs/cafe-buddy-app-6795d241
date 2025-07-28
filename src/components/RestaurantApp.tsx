@@ -76,7 +76,32 @@ export const RestaurantApp = () => {
 
   const handleOrderSubmit = (orderData: any) => {
     try {
-      addOrder(orderData);
+      // Calculate totals for the order
+      const subtotal = orderData.items.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+      const taxRate = config?.gstRate || 18;
+      const tax = (subtotal * taxRate) / 100;
+      const total = subtotal + tax;
+
+      // Find the table object if tableId is provided
+      const tableObj = orderData.tableId ? tables.find(t => t.id === orderData.tableId) : undefined;
+
+      // Create complete order object
+      const completeOrderData = {
+        tableId: orderData.tableId,
+        table: tableObj,
+        type: orderData.type,
+        status: 'pending' as const,
+        items: orderData.items,
+        subtotal: subtotal,
+        tax: tax,
+        discount: 0,
+        total: total,
+        paymentStatus: 'pending' as const,
+        customerName: orderData.customerName,
+        customerPhone: orderData.customerPhone,
+      };
+
+      addOrder(completeOrderData);
       setShowOrderCreation(false);
       setSelectedTable(null);
       toast({
@@ -162,6 +187,7 @@ export const RestaurantApp = () => {
             onViewOrderDetails={handleViewOrderDetails}
             onPrintOrder={handlePrintOrder}
             onRefreshOrders={handleRefreshOrders}
+            language={language}
           />
         );
       
