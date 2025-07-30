@@ -247,18 +247,9 @@ export const useRestaurantData = () => {
         body: JSON.stringify({ status }),
       });
       
-      // Update local state
-      setOrders(prev => prev.map(order =>
-        order.id === orderId
-          ? { 
-              ...order, 
-              status, 
-              // Automatically mark as paid when served (for dashboard earnings calculation)
-              paymentStatus: status === 'served' ? 'paid' : order.paymentStatus,
-              updatedAt: new Date() 
-            }
-          : order
-      ));
+      // Refresh orders from server to get updated data
+      const ordersResponse = await apiRequest('/api/orders');
+      setOrders(ordersResponse);
     } catch (error) {
       console.error('Failed to update order status:', error);
       throw error;
@@ -290,15 +281,9 @@ export const useRestaurantData = () => {
       
       console.log('Order created successfully:', response);
       
-      // Add to local state for immediate UI update
-      const newOrder: Order = {
-        ...orderData,
-        id: `order-${Date.now()}`,
-        orderNumber: `ORD${String(orders.length + 1).padStart(3, '0')}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setOrders(prev => [...prev, newOrder]);
+      // Refresh orders from server to get the real order with correct ID
+      const ordersResponse = await apiRequest('/api/orders');
+      setOrders(ordersResponse);
       
     } catch (error) {
       console.error('Failed to create order:', error);
