@@ -243,12 +243,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid status" });
       }
       
-      const result = await sql`
-        UPDATE orders 
-        SET status = ${status}, updated_at = now()
-        WHERE id = ${id}
-        RETURNING *
-      `;
+      let result;
+      
+      if (status === 'served') {
+        // When marking as served, update payment status and served timestamp
+        result = await sql`
+          UPDATE orders 
+          SET status = ${status}, updated_at = now(), payment_status = 'paid'
+          WHERE id = ${id}
+          RETURNING *
+        `;
+        
+        // Update table status back to available if it's a table order
+        const order = result[0];
+        if (order && order.table_id) {
+          await sql`
+            UPDATE tables 
+            SET status = 'available', updated_at = now()
+            WHERE id = ${order.table_id}
+          `;
+        }
+      } else {
+        // For other status updates
+        result = await sql`
+          UPDATE orders 
+          SET status = ${status}, updated_at = now()
+          WHERE id = ${id}
+          RETURNING *
+        `;
+      }
       
       if (result.length === 0) {
         return res.status(404).json({ error: "Order not found" });
@@ -258,6 +281,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Update order error:', error);
       res.status(500).json({ error: "Failed to update order status" });
+    }
+  });
+
+  // Sales analytics endpoint for dashboard and reports
+  app.get("/api/sales", async (req, res) => {
+    try {
+      // Get served orders with payment info for analytics
+      const servedOrders = await sql`
+        SELECT o.*, 
+               COUNT(oi.id) as item_count,
+               json_agg(
+                 json_build_object(
+                   'menu_item_id', oi.menu_item_id,
+                   'quantity', oi.quantity,
+                   'unit_price', oi.unit_price,
+                   'total_price', oi.total_price
+                 )
+               ) as items
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.status = 'served' AND o.payment_status = 'paid'
+        GROUP BY o.id
+        ORDER BY o.created_at DESC
+      `;
+
+      // Calculate metrics
+      const totalRevenue = servedOrders.reduce((sum, order) => sum + parseFloat(order.total), 0);
+      const totalOrders = servedOrders.length;
+      const totalItems = servedOrders.reduce((sum, order) => sum + parseInt(order.item_count || 0), 0);
+      
+      res.json({
+        orders: servedOrders,
+        metrics: {
+          totalRevenue,
+          totalOrders,
+          totalItems,
+          averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0
+        }
+      });
+    } catch (error) {
+      console.error('Sales data error:', error);
+      res.status(500).json({ error: "Failed to fetch sales data" });
     }
   });
 

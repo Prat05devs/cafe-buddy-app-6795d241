@@ -250,6 +250,12 @@ export const useRestaurantData = () => {
       // Refresh orders from server to get updated data
       const ordersResponse = await apiRequest('/api/orders');
       setOrders(ordersResponse);
+      
+      // If order is marked as served, also refresh tables to update status
+      if (status === 'served') {
+        const tablesResponse = await apiRequest('/api/tables');
+        setTables(tablesResponse);
+      }
     } catch (error) {
       console.error('Failed to update order status:', error);
       throw error;
