@@ -9,6 +9,7 @@ import {
   Restaurant 
 } from '@/types/restaurant';
 import { loadConfig, RestaurantConfig } from '@/lib/config';
+import { apiRequest } from '@/lib/queryClient';
 
 export const useRestaurantData = () => {
   const [config, setConfig] = useState<RestaurantConfig | null>(null);
@@ -42,14 +43,14 @@ export const useRestaurantData = () => {
   const loading = categoriesLoading || menuItemsLoading || tablesLoading || usersLoading;
 
   // Transform API data to app format
-  const categories: Category[] = (categoriesData || []).map((cat: any) => ({
+  const categories: Category[] = Array.isArray(categoriesData) ? categoriesData.map((cat: any) => ({
     id: cat.id.toString(),
     name: cat.name,
     displayOrder: cat.sort_order,
     icon: cat.icon
-  }));
+  })) : [];
 
-  const menuItems: MenuItem[] = (menuItemsData || []).map((item: any) => ({
+  const menuItems: MenuItem[] = Array.isArray(menuItemsData) ? menuItemsData.map((item: any) => ({
     id: item.id.toString(),
     name: item.name,
     description: item.description || '',
@@ -61,15 +62,15 @@ export const useRestaurantData = () => {
     allergens: [],
     createdAt: new Date(item.created_at),
     updatedAt: new Date(item.updated_at)
-  }));
+  })) : [];
 
-  const tables: Table[] = (tablesData || []).map((table: any) => ({
+  const tables: Table[] = Array.isArray(tablesData) ? tablesData.map((table: any) => ({
     id: table.id.toString(),
     number: table.number,
     capacity: table.capacity,
     status: table.status as Table['status'],
     floor: table.floor
-  }));
+  })) : [];
 
   // Create restaurant object from config
   const [restaurant, setRestaurant] = useState<Restaurant>({
@@ -107,6 +108,15 @@ export const useRestaurantData = () => {
         const finalLanguage = storedLanguage || configData.language || 'en';
         setLanguage(finalLanguage);
         
+        // Helper function to get localized text
+        const getLocalizedText = (textObj: any, lang: string = finalLanguage): string => {
+          if (typeof textObj === 'string') return textObj;
+          if (typeof textObj === 'object' && textObj !== null) {
+            return textObj[lang] || textObj['en'] || textObj[Object.keys(textObj)[0]] || '';
+          }
+          return '';
+        };
+
         // Update restaurant info
         setRestaurant({
           id: 'rest-1',
@@ -268,8 +278,17 @@ export const useRestaurantData = () => {
 
   // Table management functions
   const updateTableStatus = async (tableId: string, status: Table['status']) => {
-    // TODO: Implement API call to update table status
-    console.log('Update table status:', tableId, status);
+    try {
+      await apiRequest(`/api/tables/${tableId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      // Refresh tables data after update
+      // In a real app, you'd invalidate the query to trigger a refetch
+      console.log('Table status updated successfully');
+    } catch (error) {
+      console.error('Failed to update table status:', error);
+    }
   };
 
   return {
