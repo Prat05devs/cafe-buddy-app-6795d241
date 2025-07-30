@@ -211,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         await sql`
-          INSERT INTO order_items (order_id, menu_item_id, quantity, price, total_price, special_instructions)
+          INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, total_price, special_instructions)
           VALUES (${itemData.order_id}, ${itemData.menu_item_id}, ${itemData.quantity}, ${itemData.price}, ${itemData.total_price}, ${itemData.special_instructions})
         `;
       }
