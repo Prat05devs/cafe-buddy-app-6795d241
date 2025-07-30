@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { 
   MenuItem, 
   Category, 
@@ -11,40 +12,63 @@ import { loadConfig, RestaurantConfig } from '@/lib/config';
 
 export const useRestaurantData = () => {
   const [config, setConfig] = useState<RestaurantConfig | null>(null);
-  const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState('en');
-  const [rawMenuItems, setRawMenuItems] = useState<any[]>([]);
-  const [rawCategories, setRawCategories] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-  // Helper function to get localized text
-  const getLocalizedText = (textObj: any, lang: string = language): string => {
-    if (typeof textObj === 'string') return textObj;
-    if (typeof textObj === 'object' && textObj !== null) {
-      return textObj[lang] || textObj['en'] || textObj[Object.keys(textObj)[0]] || '';
-    }
-    return '';
-  };
+  // Fetch categories from API
+  const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
+    queryKey: ['/api/categories'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
-  // Computed values that update when language changes
-  const categories = rawCategories.map(cat => ({
-    id: cat.id,
-    name: getLocalizedText(cat.name),
-    displayOrder: cat.order,
+  // Fetch menu items from API
+  const { data: menuItemsData, isLoading: menuItemsLoading } = useQuery({
+    queryKey: ['/api/menu/items'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Fetch tables from API
+  const { data: tablesData, isLoading: tablesLoading } = useQuery({
+    queryKey: ['/api/tables'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Fetch users from API
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: ['/api/users'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const loading = categoriesLoading || menuItemsLoading || tablesLoading || usersLoading;
+
+  // Transform API data to app format
+  const categories: Category[] = (categoriesData || []).map((cat: any) => ({
+    id: cat.id.toString(),
+    name: cat.name,
+    displayOrder: cat.sort_order,
     icon: cat.icon
   }));
 
-  const menuItems = rawMenuItems.map(item => ({
+  const menuItems: MenuItem[] = (menuItemsData || []).map((item: any) => ({
     id: item.id.toString(),
-    name: getLocalizedText(item.name),
-    description: getLocalizedText(item.description),
-    price: item.price,
-    category: item.category.toLowerCase().replace(/\s+/g, '-'),
-    available: item.available,
-    imageUrl: item.image,
-    ingredients: item.ingredients || [],
-    allergens: item.allergens || [],
-    createdAt: new Date(),
-    updatedAt: new Date()
+    name: item.name,
+    description: item.description || '',
+    price: parseFloat(item.price),
+    category: item.category_name || 'uncategorized',
+    available: item.is_available,
+    imageUrl: item.image_url,
+    ingredients: [],
+    allergens: [],
+    createdAt: new Date(item.created_at),
+    updatedAt: new Date(item.updated_at)
+  }));
+
+  const tables: Table[] = (tablesData || []).map((table: any) => ({
+    id: table.id.toString(),
+    number: table.number,
+    capacity: table.capacity,
+    status: table.status as Table['status'],
+    floor: table.floor
   }));
 
   // Create restaurant object from config
@@ -66,11 +90,7 @@ export const useRestaurantData = () => {
     }
   });
 
-  // Transform tables from config format to app format - will be populated from data.json
-  const [tables, setTables] = useState<Table[]>([]);
-  
-  // Orders will be managed dynamically (not from data.json)
-  const [orders, setOrders] = useState<Order[]>([]);  // Load config from data.json on component mount
+  // Load config from data.json on component mount
   useEffect(() => {
     const fetchConfig = async () => {
       try {
@@ -109,25 +129,7 @@ export const useRestaurantData = () => {
         });
         
         // Set initial language - removed duplicate line since we already set it above
-        
-        // Store raw categories and menu items for localization
-        setRawCategories(configData.categories || []);
-        setRawMenuItems(configData.menu || []);
-        
-        // Transform tables from config data
-        if (configData.tables) {
-          const transformedTables: Table[] = configData.tables.map((table: any) => ({
-            id: String(table.id),
-            number: table.name,
-            capacity: table.capacity,
-            status: table.status as Table['status'],
-            floor: table.floor,
-            position: table.position || { x: 0, y: 0 }
-          }));
-          setTables(transformedTables);
-        }
-        
-        setLoading(false);
+
       } catch (error) {
         console.error('Failed to load config:', error);
         console.log('Using fallback configuration...');
@@ -176,9 +178,6 @@ export const useRestaurantData = () => {
         };
         
         setConfig(fallbackConfig);
-        setRawCategories([]);
-        setRawMenuItems([]);
-        setLoading(false);
       }
     };
     
@@ -209,50 +208,25 @@ export const useRestaurantData = () => {
     return acc;
   }, {} as Record<string, Order[]>);
 
-  // Menu management functions
-  const addMenuItem = (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newItem = {
-      id: Date.now(),
-      name: { en: item.name },
-      description: { en: item.description },
-      price: item.price,
-      category: item.category,
-      available: item.available,
-      image: item.imageUrl,
-      ingredients: item.ingredients,
-      allergens: item.allergens,
-    };
-    setRawMenuItems(prev => [...prev, newItem]);
+  // Menu management functions (will make API calls in the future)
+  const addMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => {
+    // TODO: Implement API call to create menu item
+    console.log('Add menu item:', item);
   };
 
-  const updateMenuItem = (id: string, updates: Partial<MenuItem>) => {
-    setRawMenuItems(prev => prev.map(item => 
-      item.id.toString() === id 
-        ? { 
-            ...item, 
-            ...(updates.name && { name: { en: updates.name } }),
-            ...(updates.description && { description: { en: updates.description } }),
-            ...(updates.price && { price: updates.price }),
-            ...(updates.category && { category: updates.category }),
-            ...(updates.available !== undefined && { available: updates.available }),
-            ...(updates.imageUrl && { image: updates.imageUrl }),
-            ...(updates.ingredients && { ingredients: updates.ingredients }),
-            ...(updates.allergens && { allergens: updates.allergens }),
-          }
-        : item
-    ));
+  const updateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
+    // TODO: Implement API call to update menu item
+    console.log('Update menu item:', id, updates);
   };
 
-  const deleteMenuItem = (id: string) => {
-    setRawMenuItems(prev => prev.filter(item => item.id.toString() !== id));
+  const deleteMenuItem = async (id: string) => {
+    // TODO: Implement API call to delete menu item
+    console.log('Delete menu item:', id);
   };
 
-  const toggleMenuItemAvailability = (id: string) => {
-    setRawMenuItems(prev => prev.map(item =>
-      item.id.toString() === id
-        ? { ...item, available: !item.available }
-        : item
-    ));
+  const toggleMenuItemAvailability = async (id: string) => {
+    // TODO: Implement API call to toggle availability
+    console.log('Toggle menu item availability:', id);
   };
 
   // Order management functions
@@ -293,12 +267,9 @@ export const useRestaurantData = () => {
   };
 
   // Table management functions
-  const updateTableStatus = (tableId: string, status: Table['status']) => {
-    setTables(prev => prev.map(table =>
-      table.id === tableId
-        ? { ...table, status }
-        : table
-    ));
+  const updateTableStatus = async (tableId: string, status: Table['status']) => {
+    // TODO: Implement API call to update table status
+    console.log('Update table status:', tableId, status);
   };
 
   return {

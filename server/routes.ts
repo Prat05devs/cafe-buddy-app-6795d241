@@ -8,7 +8,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sql = postgres.default(process.env.DATABASE_URL!, { prepare: false });
   
   // Categories API
-  app.get("/api/v1/categories", async (req, res) => {
+  app.get("/api/categories", async (req, res) => {
     try {
       const categories = await sql`
         SELECT * FROM categories 
@@ -23,7 +23,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Menu Items API
-  app.get("/api/v1/menu/items", async (req, res) => {
+  app.get("/api/menu/items", async (req, res) => {
     try {
       const menuItems = await sql`
         SELECT 
@@ -43,12 +43,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Tables API
-  app.get("/api/v1/tables", async (req, res) => {
+  app.get("/api/tables", async (req, res) => {
     try {
       const tables = await sql`
         SELECT * FROM tables 
         WHERE is_active = true 
-        ORDER BY number ASC
+        ORDER BY CAST(number AS INTEGER) ASC
       `;
       res.json(tables);
     } catch (error) {
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Users API
-  app.get("/api/v1/users", async (req, res) => {
+  app.get("/api/users", async (req, res) => {
     try {
       const users = await sql`
         SELECT id, email, first_name, last_name, role, is_active, created_at, updated_at
@@ -74,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create new menu item (POST)
-  app.post("/api/v1/menu/items", async (req, res) => {
+  app.post("/api/menu/items", async (req, res) => {
     try {
       const { name, description, price, category_id, is_vegetarian = true } = req.body;
       
@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update table status (PATCH)
-  app.patch("/api/v1/tables/:id/status", async (req, res) => {
+  app.patch("/api/tables/:id/status", async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;

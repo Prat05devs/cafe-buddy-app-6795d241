@@ -168,7 +168,7 @@ export const RestaurantApp = () => {
                 description: language === 'hi' ? 'आइटम जोड़ने की सुविधा यहाँ खुलेगी।' : 'Add item functionality would open here.',
               });
             }}
-            onEditItem={(item) => {
+            onEditItem={(item: MenuItem) => {
               toast({
                 title: language === 'hi' ? 'आइटम संपादित करें' : 'Edit Item',
                 description: language === 'hi' ? `${item.name} संपादित करने की सुविधा यहाँ खुलेगी।` : `Edit ${item.name} functionality would open here.`,
@@ -196,9 +196,9 @@ export const RestaurantApp = () => {
           <TableManagement
             tables={tables}
             tableOrders={tableOrders}
-            onSelectTable={(table) => handleViewTableOrders(table.id)}
+            onSelectTable={(table: Table) => handleViewTableOrders(table.id)}
             onAddOrder={handleCreateOrder}
-            onCleanTable={(tableId) => updateTableStatus(tableId, 'available')}
+            onCleanTable={(tableId: string) => updateTableStatus(tableId, 'available')}
             onViewTableOrders={handleViewTableOrders}
           />
         );
@@ -211,14 +211,14 @@ export const RestaurantApp = () => {
           <Settings
             config={config!}
             language={language}
-            onLanguageChange={(newLanguage) => {
+            onLanguageChange={(newLanguage: string) => {
               setLanguage(newLanguage);
               toast({
                 title: newLanguage === 'hi' ? 'भाषा बदली गई' : 'Language Changed',
                 description: newLanguage === 'hi' ? `भाषा हिंदी में बदल दी गई` : `Language changed to English`,
               });
             }}
-            onSettingsUpdate={(settings) => {
+            onSettingsUpdate={(settings: any) => {
               toast({
                 title: language === 'hi' ? 'सेटिंग्स अपडेट हुईं' : 'Settings Updated',
                 description: language === 'hi' ? 'सेटिंग्स सफलतापूर्वक सेव हो गई हैं' : 'Settings have been saved successfully.',
