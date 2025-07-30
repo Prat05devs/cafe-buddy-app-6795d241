@@ -11,7 +11,13 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
 export default function Reports() {
-  const { orders, restaurant } = useRestaurant();
+  const { orders, restaurant, config } = useRestaurant();
+  
+  // Fallback restaurant data
+  const restaurantData = restaurant || config || {
+    currency: '$',
+    name: 'Cafe Buddy'
+  };
   const { toast } = useToast();
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month'>('today');
   
@@ -99,7 +105,7 @@ export default function Reports() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {restaurant.currency}{currentSales.revenue.toFixed(2)}
+              {restaurantData.currency}{currentSales.revenue.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
               {selectedPeriod === 'today' ? 'Today' : 
@@ -128,7 +134,7 @@ export default function Reports() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {restaurant.currency}{currentSales.averageOrderValue.toFixed(2)}
+              {restaurantData.currency}{currentSales.averageOrderValue.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
               Per order value
@@ -182,7 +188,7 @@ export default function Reports() {
                     <div className="flex items-center space-x-6 text-right">
                       <div>
                         <div className="text-sm font-medium">
-                          {restaurant.currency}{day.revenue.toFixed(2)}
+                          {restaurantData.currency}{day.revenue.toFixed(2)}
                         </div>
                         <div className="text-xs text-muted-foreground">Revenue</div>
                       </div>
@@ -216,7 +222,7 @@ export default function Reports() {
                           {index + 1}
                         </div>
                         <div>
-                          <div className="font-medium">{item.menuItem.name}</div>
+                          <div className="font-medium">{item.menuItem?.name || item.name}</div>
                           <div className="text-sm text-muted-foreground">
                             {item.quantity} units sold
                           </div>
@@ -224,10 +230,10 @@ export default function Reports() {
                       </div>
                       <div className="text-right">
                         <div className="font-medium">
-                          {restaurant.currency}{item.revenue.toFixed(2)}
+                          {restaurantData.currency}{item.revenue.toFixed(2)}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {restaurant.currency}{item.menuItem.price} each
+                          {item.menuItem?.price ? `${restaurantData.currency}${item.menuItem.price} each` : item.category || 'Menu Item'}
                         </div>
                       </div>
                     </div>
@@ -265,7 +271,7 @@ export default function Reports() {
                         </Badge>
                       </div>
                       <div className="font-medium">
-                        {restaurant.currency}{stat.amount.toFixed(2)}
+                        {restaurantData.currency}{stat.amount.toFixed(2)}
                       </div>
                     </div>
                   ))
@@ -307,7 +313,7 @@ export default function Reports() {
                         </div>
                         <div>
                           <div className="text-sm font-medium">
-                            {restaurant.currency}{hour.revenue.toFixed(2)}
+                            {restaurantData.currency}{hour.revenue.toFixed(2)}
                           </div>
                           <div className="text-xs text-muted-foreground">Revenue</div>
                         </div>
