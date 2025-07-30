@@ -153,6 +153,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         items 
       } = req.body;
       
+      console.log('Received order data:', JSON.stringify(req.body, null, 2));
+      
       if (!subtotal || !total || !items || items.length === 0) {
         return res.status(400).json({ error: "Order details and items are required" });
       }
@@ -161,6 +163,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orderCount = await sql`SELECT COUNT(*) as count FROM orders`;
       const orderNumber = `ORD${String(Number(orderCount[0].count) + 1).padStart(3, '0')}`;
       
+      // Prepare values with explicit null handling
+      const orderData = {
+        order_number: orderNumber,
+        table_id: table_id ? parseInt(table_id) : null,
+        type: type || 'dine-in',
+        status: 'pending',
+        subtotal: subtotal.toString(),
+        tax: (tax || 0).toString(),
+        discount: (discount || 0).toString(),
+        total: total.toString(),
+        payment_status: 'pending',
+        payment_method: 'cash',
+        customer_name: customer_name || null,
+        customer_phone: customer_phone || null
+      };
+      
+      console.log('Processed order data:', orderData);
+      
       // Create order
       const orderResult = await sql`
         INSERT INTO orders (
@@ -168,36 +188,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
           payment_status, payment_method, customer_name, customer_phone
         )
         VALUES (
-          ${orderNumber}, ${table_id || null}, ${type || 'dine-in'}, 'pending', 
-          ${subtotal}, ${tax || '0'}, ${discount || '0'}, ${total},
-          'pending', 'cash', ${customer_name || null}, ${customer_phone || null}
+          ${orderData.order_number}, ${orderData.table_id}, ${orderData.type}, ${orderData.status}, 
+          ${orderData.subtotal}, ${orderData.tax}, ${orderData.discount}, ${orderData.total},
+          ${orderData.payment_status}, ${orderData.payment_method}, ${orderData.customer_name}, ${orderData.customer_phone}
         )
         RETURNING *
       `;
       
       const order = orderResult[0];
+      console.log('Created order:', order);
       
       // Add order items
       for (const item of items) {
+        const itemData = {
+          order_id: order.id,
+          menu_item_id: parseInt(item.menu_item_id),
+          quantity: parseInt(item.quantity),
+          price: item.price.toString(),
+          total_price: item.total_price.toString(),
+          special_instructions: item.special_instructions || null
+        };
+        
         await sql`
           INSERT INTO order_items (order_id, menu_item_id, quantity, price, total_price, special_instructions)
-          VALUES (${order.id}, ${item.menu_item_id}, ${item.quantity}, ${item.price}, ${item.total_price}, ${item.special_instructions || null})
+          VALUES (${itemData.order_id}, ${itemData.menu_item_id}, ${itemData.quantity}, ${itemData.price}, ${itemData.total_price}, ${itemData.special_instructions})
         `;
       }
       
       // Update table status if table order
-      if (table_id) {
+      if (orderData.table_id) {
         await sql`
           UPDATE tables 
           SET status = 'occupied', updated_at = now()
-          WHERE id = ${table_id}
+          WHERE id = ${orderData.table_id}
         `;
       }
       
       res.status(201).json({ message: "Order created successfully", order });
     } catch (error) {
       console.error('Create order error:', error);
-      res.status(500).json({ error: "Failed to create order" });
+      res.status(500).json({ error: "Failed to create order", details: error.message });
     }
   });
 
