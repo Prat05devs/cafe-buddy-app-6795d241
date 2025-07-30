@@ -124,6 +124,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Orders API
+  app.get("/api/orders", async (req, res) => {
+    try {
+      const orders = await sql`
+        SELECT * FROM orders 
+        ORDER BY created_at DESC
+      `;
+      res.json(orders);
+    } catch (error) {
+      console.error('Orders error:', error);
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  // Create new order (POST)
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const { 
+        table_id, 
+        type, 
+        subtotal, 
+        tax, 
+        discount, 
+        total, 
+        customer_name, 
+        customer_phone,
+        items 
+      } = req.body;
+      
+      if (!subtotal || !total || !items || items.length === 0) {
+        return res.status(400).json({ error: "Order details and items are required" });
+      }
+      
+      // Generate order number
+      const orderCount = await sql`SELECT COUNT(*) as count FROM orders`;
+      const orderNumber = `ORD${String(Number(orderCount[0].count) + 1).padStart(3, '0')}`;
+      
+      // Create order
+      const orderResult = await sql`
+        INSERT INTO orders (
+          order_number, table_id, type, status, subtotal, tax, discount, total,
+          payment_status, payment_method, customer_name, customer_phone
+        )
+        VALUES (
+          ${orderNumber}, ${table_id || null}, ${type || 'dine-in'}, 'pending', 
+          ${subtotal}, ${tax || '0'}, ${discount || '0'}, ${total},
+          'pending', 'cash', ${customer_name || null}, ${customer_phone || null}
+        )
+        RETURNING *
+      `;
+      
+      const order = orderResult[0];
+      
+      // Add order items
+      for (const item of items) {
+        await sql`
+          INSERT INTO order_items (order_id, menu_item_id, quantity, price, total_price, special_instructions)
+          VALUES (${order.id}, ${item.menu_item_id}, ${item.quantity}, ${item.price}, ${item.total_price}, ${item.special_instructions || null})
+        `;
+      }
+      
+      // Update table status if table order
+      if (table_id) {
+        await sql`
+          UPDATE tables 
+          SET status = 'occupied', updated_at = now()
+          WHERE id = ${table_id}
+        `;
+      }
+      
+      res.status(201).json({ message: "Order created successfully", order });
+    } catch (error) {
+      console.error('Create order error:', error);
+      res.status(500).json({ error: "Failed to create order" });
+    }
+  });
+
+  // Update order status (PATCH)
+  app.patch("/api/orders/:id/status", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      const validStatuses = ['pending', 'preparing', 'ready', 'served', 'cancelled'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+      
+      const result = await sql`
+        UPDATE orders 
+        SET status = ${status}, updated_at = now(),
+            served_at = ${status === 'served' ? 'now()' : null}
+        WHERE id = ${id}
+        RETURNING *
+      `;
+      
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      
+      res.json({ message: "Order status updated", order: result[0] });
+    } catch (error) {
+      console.error('Update order error:', error);
+      res.status(500).json({ error: "Failed to update order status" });
+    }
+  });
+
   // Health check
   app.get("/api/health", async (req, res) => {
     try {

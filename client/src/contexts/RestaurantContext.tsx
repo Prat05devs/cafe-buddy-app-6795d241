@@ -16,13 +16,13 @@ interface RestaurantContextType {
   config: RestaurantConfig | null;
   language: string;
   // Actions
-  addMenuItem: (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateMenuItem: (id: string, updates: Partial<MenuItem>) => void;
-  deleteMenuItem: (id: string) => void;
-  toggleMenuItemAvailability: (id: string) => void;
-  updateOrderStatus: (orderId: string, status: Order['status']) => void;
-  addOrder: (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => void;
-  updateTableStatus: (tableId: string, status: Table['status']) => void;
+  addMenuItem: (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateMenuItem: (id: string, updates: Partial<MenuItem>) => Promise<void>;
+  deleteMenuItem: (id: string) => Promise<void>;
+  toggleMenuItemAvailability: (id: string) => Promise<void>;
+  updateOrderStatus: (orderId: string, status: Order['status']) => Promise<void>;
+  addOrder: (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateTableStatus: (tableId: string, status: Table['status']) => Promise<void>;
   setLanguage: (language: string) => void;
 }
 

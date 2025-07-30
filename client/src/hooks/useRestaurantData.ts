@@ -44,7 +44,7 @@ export const useRestaurantData = () => {
 
   // Transform API data to app format
   const categories: Category[] = Array.isArray(categoriesData) ? categoriesData.map((cat: any) => ({
-    id: cat.id.toString(),
+    id: cat.name.toLowerCase().replace(/\s+/g, '-'),
     name: cat.name,
     displayOrder: cat.sort_order,
     icon: cat.icon
@@ -55,7 +55,7 @@ export const useRestaurantData = () => {
     name: item.name,
     description: item.description || '',
     price: parseFloat(item.price),
-    category: item.category_name || 'uncategorized',
+    category: item.category_name?.toLowerCase().replace(/\s+/g, '-') || 'uncategorized',
     available: item.is_available,
     imageUrl: item.image_url,
     ingredients: [],
@@ -240,29 +240,70 @@ export const useRestaurantData = () => {
   };
 
   // Order management functions
-  const updateOrderStatus = (orderId: string, status: Order['status']) => {
-    setOrders(prev => prev.map(order =>
-      order.id === orderId
-        ? { 
-            ...order, 
-            status, 
-            // Automatically mark as paid when served (for dashboard earnings calculation)
-            paymentStatus: status === 'served' ? 'paid' : order.paymentStatus,
-            updatedAt: new Date() 
-          }
-        : order
-    ));
+  const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+    try {
+      await apiRequest(`/api/orders/${orderId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      
+      // Update local state
+      setOrders(prev => prev.map(order =>
+        order.id === orderId
+          ? { 
+              ...order, 
+              status, 
+              // Automatically mark as paid when served (for dashboard earnings calculation)
+              paymentStatus: status === 'served' ? 'paid' : order.paymentStatus,
+              updatedAt: new Date() 
+            }
+          : order
+      ));
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+      throw error;
+    }
   };
 
-  const addOrder = (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => {
-    const newOrder: Order = {
-      ...orderData,
-      id: `order-${Date.now()}`,
-      orderNumber: `ORD${String(orders.length + 1).padStart(3, '0')}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setOrders(prev => [...prev, newOrder]);
+  const addOrder = async (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const response = await apiRequest('/api/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          table_id: orderData.tableId ? parseInt(orderData.tableId) : null,
+          type: orderData.type,
+          subtotal: orderData.subtotal.toString(),
+          tax: orderData.tax?.toString() || '0',
+          discount: orderData.discount?.toString() || '0',
+          total: orderData.total.toString(),
+          customer_name: orderData.customerName,
+          customer_phone: orderData.customerPhone,
+          items: orderData.items.map(item => ({
+            menu_item_id: parseInt(item.menuItem.id),
+            quantity: item.quantity,
+            price: item.menuItem.price.toString(),
+            total_price: (item.quantity * item.menuItem.price).toString(),
+            special_instructions: item.specialInstructions
+          }))
+        }),
+      });
+      
+      console.log('Order created successfully:', response);
+      
+      // Add to local state for immediate UI update
+      const newOrder: Order = {
+        ...orderData,
+        id: `order-${Date.now()}`,
+        orderNumber: `ORD${String(orders.length + 1).padStart(3, '0')}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setOrders(prev => [...prev, newOrder]);
+      
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      throw error;
+    }
   };
 
   // Language management function
