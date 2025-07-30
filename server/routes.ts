@@ -166,15 +166,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orderCount = await sql`SELECT COUNT(*) as count FROM orders`;
       const orderNumber = `ORD${String(Number(orderCount[0].count) + 1).padStart(3, '0')}`;
       
-      // Prepare values with explicit null handling
+      // Prepare values with explicit null handling (only for columns that exist)
       const orderData = {
         order_number: orderNumber,
         table_id: table_id ? parseInt(table_id) : null,
         type: type || 'dine-in',
         status: 'pending',
         subtotal: subtotal.toString(),
-        tax: (tax || 0).toString(),
-        discount: (discount || 0).toString(),
         total: total.toString(),
         payment_status: 'pending',
         payment_method: 'cash',
@@ -184,15 +182,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Processed order data:', orderData);
       
-      // Create order
+      // Create order (using only columns that exist in database)
       const orderResult = await sql`
         INSERT INTO orders (
-          order_number, table_id, type, status, subtotal, tax, discount, total,
+          order_number, table_id, type, status, subtotal, total,
           payment_status, payment_method, customer_name, customer_phone
         )
         VALUES (
           ${orderData.order_number}, ${orderData.table_id}, ${orderData.type}, ${orderData.status}, 
-          ${orderData.subtotal}, ${orderData.tax}, ${orderData.discount}, ${orderData.total},
+          ${orderData.subtotal}, ${orderData.total},
           ${orderData.payment_status}, ${orderData.payment_method}, ${orderData.customer_name}, ${orderData.customer_phone}
         )
         RETURNING *
