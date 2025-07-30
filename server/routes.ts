@@ -284,10 +284,151 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sales analytics endpoint for dashboard and reports
+  // Comprehensive analytics endpoint for dashboard and reports
+  app.get("/api/analytics", async (req, res) => {
+    try {
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekStart = new Date(now.setDate(now.getDate() - 7));
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // Get all completed orders with items
+      const completedOrders = await sql`
+        SELECT o.*, 
+               oi.menu_item_id,
+               oi.quantity,
+               oi.unit_price,
+               oi.total_price,
+               mi.name as item_name,
+               mi.category_id,
+               c.name as category_name,
+               EXTRACT(hour FROM o.created_at) as order_hour,
+               EXTRACT(dow FROM o.created_at) as day_of_week
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id
+        LEFT JOIN categories c ON mi.category_id = c.id
+        WHERE o.status = 'served' AND o.payment_status = 'paid'
+        ORDER BY o.created_at DESC
+      `;
+
+      // Calculate daily sales
+      const todaySales = completedOrders.filter(order => 
+        new Date(order.created_at) >= todayStart
+      );
+      const weekSales = completedOrders.filter(order => 
+        new Date(order.created_at) >= weekStart
+      );
+      const monthSales = completedOrders.filter(order => 
+        new Date(order.created_at) >= monthStart
+      );
+
+      // Calculate revenue totals
+      const todayRevenue = todaySales.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+      const weekRevenue = weekSales.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+      const monthRevenue = monthSales.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+      const totalRevenue = completedOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+
+      // Count unique orders
+      const todayOrderCount = [...new Set(todaySales.map(o => o.id))].length;
+      const weekOrderCount = [...new Set(weekSales.map(o => o.id))].length;
+      const monthOrderCount = [...new Set(monthSales.map(o => o.id))].length;
+      const totalOrderCount = [...new Set(completedOrders.map(o => o.id))].length;
+
+      // Calculate top selling items
+      const itemSales = {};
+      completedOrders.forEach(order => {
+        if (order.menu_item_id && order.item_name) {
+          const key = order.menu_item_id;
+          if (!itemSales[key]) {
+            itemSales[key] = {
+              id: order.menu_item_id,
+              name: order.item_name,
+              category: order.category_name,
+              quantity: 0,
+              revenue: 0
+            };
+          }
+          itemSales[key].quantity += parseInt(order.quantity || 0);
+          itemSales[key].revenue += parseFloat(order.total_price || 0);
+        }
+      });
+
+      const topSellingItems = Object.values(itemSales)
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 10);
+
+      // Calculate peak hours
+      const hourlyStats = {};
+      completedOrders.forEach(order => {
+        const hour = parseInt(order.order_hour);
+        if (!hourlyStats[hour]) {
+          hourlyStats[hour] = { hour, orders: 0, revenue: 0 };
+        }
+        hourlyStats[hour].orders += 1;
+        hourlyStats[hour].revenue += parseFloat(order.total || 0);
+      });
+
+      const peakHours = Object.values(hourlyStats)
+        .sort((a, b) => b.orders - a.orders)
+        .slice(0, 5);
+
+      // Daily trend for the last 7 days
+      const dailyTrend = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayOrders = completedOrders.filter(order => 
+          order.created_at && order.created_at.toISOString().startsWith(dateStr)
+        );
+        
+        dailyTrend.push({
+          date: dateStr,
+          revenue: dayOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0),
+          orders: [...new Set(dayOrders.map(o => o.id))].length,
+          items: dayOrders.reduce((sum, order) => sum + parseInt(order.quantity || 0), 0)
+        });
+      }
+
+      res.json({
+        summary: {
+          today: {
+            revenue: todayRevenue,
+            orders: todayOrderCount,
+            averageOrderValue: todayOrderCount > 0 ? todayRevenue / todayOrderCount : 0
+          },
+          week: {
+            revenue: weekRevenue,
+            orders: weekOrderCount,
+            averageOrderValue: weekOrderCount > 0 ? weekRevenue / weekOrderCount : 0
+          },
+          month: {
+            revenue: monthRevenue,
+            orders: monthOrderCount,
+            averageOrderValue: monthOrderCount > 0 ? monthRevenue / monthOrderCount : 0
+          },
+          total: {
+            revenue: totalRevenue,
+            orders: totalOrderCount,
+            averageOrderValue: totalOrderCount > 0 ? totalRevenue / totalOrderCount : 0
+          }
+        },
+        topSellingItems,
+        peakHours,
+        dailyTrend,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Analytics error:', error);
+      res.status(500).json({ error: "Failed to fetch analytics data" });
+    }
+  });
+
+  // Keep the original sales endpoint for backward compatibility
   app.get("/api/sales", async (req, res) => {
     try {
-      // Get served orders with payment info for analytics
       const servedOrders = await sql`
         SELECT o.*, 
                COUNT(oi.id) as item_count,
@@ -306,7 +447,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ORDER BY o.created_at DESC
       `;
 
-      // Calculate metrics
       const totalRevenue = servedOrders.reduce((sum, order) => sum + parseFloat(order.total), 0);
       const totalOrders = servedOrders.length;
       const totalItems = servedOrders.reduce((sum, order) => sum + parseInt(order.item_count || 0), 0);

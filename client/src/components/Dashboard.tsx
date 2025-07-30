@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useRestaurant } from '@/contexts/RestaurantContext';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import RecentOrders from '@/components/dashboard/RecentOrders';
@@ -11,6 +12,13 @@ interface DashboardProps {
 
 export const Dashboard = ({ onNavigate }: DashboardProps) => {
   const { config, orders, menuItems, tables, dashboardStats } = useRestaurant();
+  
+  // Fetch real-time analytics data
+  const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['/api/analytics'],
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    refetchInterval: 1000 * 60 * 5, // Refresh every 5 minutes
+  });
   
   const restaurantName = config ? getLocalizedText(config.restaurantName, config.language || 'en') : 'Restaurant';
   
@@ -81,8 +89,15 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
   });
   const weekSales = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
 
-  // Use calculated dashboard stats from the context
-  const stats = {
+  // Use analytics data if available, otherwise fallback to calculated stats
+  const stats = analyticsData ? {
+    todaySales: analyticsData.summary.today.revenue || 0,
+    weekSales: analyticsData.summary.week.revenue || 0,
+    pendingOrders: pendingOrders.length,
+    completedOrders: analyticsData.summary.total.orders || completedOrders.length,
+    availableTables: dashboardStats.availableTables,
+    totalTables: dashboardStats.totalTables
+  } : {
     todaySales: todaySales,
     weekSales: weekSales,
     pendingOrders: pendingOrders.length,

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Order } from '@/types/restaurant';
 import { 
   isToday, 
@@ -58,9 +59,24 @@ export interface PeakHour {
 
 export function useSalesData(orders: Order[]) {
   const [salesData, setSalesData] = useState<SalesData | null>(null);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Filter only paid and served orders
+  // Fetch comprehensive analytics from API
+  const { data: analyticsResponse, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['/api/analytics'],
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    refetchInterval: 1000 * 60 * 5, // Refresh every 5 minutes
+  });
+
+  // Update analytics data when API response changes
+  useEffect(() => {
+    if (analyticsResponse) {
+      setAnalyticsData(analyticsResponse);
+    }
+  }, [analyticsResponse]);
+
+  // Filter only paid and served orders for fallback calculations
   const paidOrders = useMemo(() => {
     return orders.filter(order => 
       order.paymentStatus === 'paid' && 
@@ -247,8 +263,9 @@ export function useSalesData(orders: Order[]) {
   }, []);
 
   return {
-    salesData,
-    isRefreshing,
+    salesData: analyticsData || salesData,
+    analyticsData,
+    isRefreshing: isRefreshing || analyticsLoading,
     refreshSalesData,
     getTopSellingItems,
     getPaymentMethodStats,

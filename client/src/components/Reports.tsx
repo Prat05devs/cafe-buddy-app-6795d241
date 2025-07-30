@@ -17,6 +17,7 @@ export default function Reports() {
   
   const {
     salesData,
+    analyticsData,
     isRefreshing,
     refreshSalesData,
     getTopSellingItems,
@@ -32,7 +33,7 @@ export default function Reports() {
     });
   };
 
-  if (!salesData) {
+  if (!salesData && !analyticsData) {
     return (
       <div className="p-6 flex items-center justify-center">
         <div className="text-center">
@@ -43,12 +44,16 @@ export default function Reports() {
     );
   }
 
-  const currentSales = selectedPeriod === 'today' ? salesData.today : 
-                     selectedPeriod === 'week' ? salesData.week : salesData.month;
+  // Use analytics data if available, otherwise fallback to salesData
+  const currentSales = analyticsData ? 
+    (selectedPeriod === 'today' ? analyticsData.summary.today : 
+     selectedPeriod === 'week' ? analyticsData.summary.week : analyticsData.summary.month) :
+    (selectedPeriod === 'today' ? salesData?.today : 
+     selectedPeriod === 'week' ? salesData?.week : salesData?.month);
 
-  const topSellingItems = getTopSellingItems(5);
+  const topSellingItems = analyticsData?.topSellingItems || getTopSellingItems(5);
   const paymentMethodStats = getPaymentMethodStats();
-  const peakHours = getPeakHours(5);
+  const peakHours = analyticsData?.peakHours || getPeakHours(5);
 
   return (
     <div className="p-6 space-y-6">
