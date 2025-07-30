@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from "@/components/ui/button";
 import { 
@@ -25,7 +25,7 @@ interface SidebarProps {
 interface NavItem {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: any;
   enabled: boolean;
 }
 

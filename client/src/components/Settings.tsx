@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,7 +16,7 @@ interface SettingsProps {
   onSettingsUpdate: (settings: Partial<RestaurantConfig>) => void;
 }
 
-export const Settings: React.FC<SettingsProps> = ({
+export const Settings = ({
   config,
   language,
   onLanguageChange,

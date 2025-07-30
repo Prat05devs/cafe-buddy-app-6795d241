@@ -1,6 +1,6 @@
 // src/components/Navigation.tsx (Updated Code)
 
-import React from 'react';
+
 import { motion } from 'framer-motion';
 import { 
   Home, 
@@ -30,7 +30,7 @@ const baseNavigationItems = [
   { id: 'settings', label: 'Settings', icon: Settings, alwaysShown: true },
 ];
 
-export const Navigation: React.FC<NavigationProps> = ({
+export const Navigation = ({
   currentView,
   onViewChange,
   className,

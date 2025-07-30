@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRestaurant } from '@/contexts/RestaurantContext';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import RecentOrders from '@/components/dashboard/RecentOrders';

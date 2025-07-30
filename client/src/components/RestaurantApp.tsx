@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Navigation } from './Navigation';
 import { TopBar } from './common/TopBar';
 import { Dashboard } from './Dashboard';
@@ -209,7 +209,7 @@ export const RestaurantApp = () => {
       case 'settings':
         return (
           <Settings
-            config={config}
+            config={config!}
             language={language}
             onLanguageChange={(newLanguage) => {
               setLanguage(newLanguage);
@@ -236,7 +236,7 @@ export const RestaurantApp = () => {
     <div className="min-h-screen bg-gradient-background">
       <div className="flex flex-col">
         <TopBar 
-          config={config}
+          config={config!}
         />
         
         <Navigation 
@@ -263,7 +263,7 @@ export const RestaurantApp = () => {
           menuItems={menuItems}
           categories={categories}
           tables={tables}
-          selectedTable={selectedTable}
+          selectedTable={selectedTable ?? undefined}
           language={language}
         />
         

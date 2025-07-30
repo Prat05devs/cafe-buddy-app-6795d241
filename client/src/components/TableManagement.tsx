@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ interface TableManagementProps {
   onViewTableOrders: (tableId: string) => void;
 }
 
-export const TableManagement: React.FC<TableManagementProps> = ({
+export const TableManagement = ({
   tables,
   tableOrders,
   onSelectTable,

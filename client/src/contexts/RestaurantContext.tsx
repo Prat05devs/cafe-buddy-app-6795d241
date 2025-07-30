@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { MenuItem, Category, Order, Table, Restaurant, DashboardStats } from '@/types/restaurant';
 import { useRestaurantData } from '@/hooks/useRestaurantData';
 import { RestaurantConfig } from '@/lib/config';

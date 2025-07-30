@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button } from "@/components/ui/button";
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRestaurant } from '@/contexts/RestaurantContext';
