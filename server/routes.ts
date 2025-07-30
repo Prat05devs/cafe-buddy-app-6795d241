@@ -245,8 +245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await sql`
         UPDATE orders 
-        SET status = ${status}, updated_at = now(),
-            served_at = ${status === 'served' ? 'now()' : null}
+        SET status = ${status}, updated_at = now()
         WHERE id = ${id}
         RETURNING *
       `;
