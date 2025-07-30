@@ -187,6 +187,7 @@ export const RestaurantApp = () => {
             onViewOrderDetails={handleViewOrderDetails}
             onPrintOrder={handlePrintOrder}
             onRefreshOrders={handleRefreshOrders}
+            onCreateNewOrder={() => setShowOrderCreation(true)}
             language={language}
           />
         );
@@ -200,6 +201,12 @@ export const RestaurantApp = () => {
             onAddOrder={handleCreateOrder}
             onCleanTable={(tableId: string) => updateTableStatus(tableId, 'available')}
             onViewTableOrders={handleViewTableOrders}
+            onAddTable={() => {
+              toast({
+                title: 'Add Table',
+                description: 'Add table functionality will be implemented here.',
+              });
+            }}
           />
         );
       

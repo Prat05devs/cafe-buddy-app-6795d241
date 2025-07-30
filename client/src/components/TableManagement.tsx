@@ -21,6 +21,7 @@ interface TableManagementProps {
   onAddOrder: (tableId: string) => void;
   onCleanTable: (tableId: string) => void;
   onViewTableOrders: (tableId: string) => void;
+  onAddTable?: () => void;
 }
 
 export const TableManagement = ({
@@ -29,7 +30,8 @@ export const TableManagement = ({
   onSelectTable,
   onAddOrder,
   onCleanTable,
-  onViewTableOrders
+  onViewTableOrders,
+  onAddTable
 }) => {
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
   
@@ -57,7 +59,7 @@ export const TableManagement = ({
           <h2 className="text-xl sm:text-2xl font-bold">Table Management</h2>
           <p className="text-sm sm:text-base text-muted-foreground">Monitor and manage restaurant tables</p>
         </div>
-        <Button size="sm" className="w-full sm:w-auto">
+        <Button onClick={onAddTable} size="sm" className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Add Table
         </Button>

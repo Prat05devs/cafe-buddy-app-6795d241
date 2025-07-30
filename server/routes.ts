@@ -45,15 +45,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Tables API
   app.get("/api/tables", async (req, res) => {
     try {
+      console.log('Fetching tables...');
       const tables = await sql`
-        SELECT * FROM tables 
+        SELECT id, number, capacity, status, floor, is_active, created_at, updated_at
+        FROM tables 
         WHERE is_active = true 
-        ORDER BY CAST(number AS INTEGER) ASC
+        ORDER BY id ASC
       `;
+      console.log('Tables fetched:', tables.length, 'tables');
       res.json(tables);
     } catch (error) {
       console.error('Tables error:', error);
-      res.status(500).json({ error: "Failed to fetch tables" });
+      res.status(500).json({ error: "Failed to fetch tables", details: error.message });
     }
   });
 

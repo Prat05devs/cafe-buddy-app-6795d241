@@ -23,6 +23,7 @@ interface OrderManagementProps {
   onViewOrderDetails: (order: Order) => void;
   onPrintOrder: (orderId: string) => void;
   onRefreshOrders: () => void;
+  onCreateNewOrder?: () => void;
   language?: string;
 }
 
@@ -32,6 +33,7 @@ export const OrderManagement = ({
   onViewOrderDetails,
   onPrintOrder,
   onRefreshOrders,
+  onCreateNewOrder,
   language = 'en'
 }) => {
   const [selectedTab, setSelectedTab] = useState('all');
@@ -66,7 +68,7 @@ export const OrderManagement = ({
             <RefreshCw className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
-          <Button size="sm" className="flex-1 sm:flex-none">
+          <Button onClick={onCreateNewOrder} size="sm" className="flex-1 sm:flex-none">
             <Plus className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">New Order</span>
           </Button>
