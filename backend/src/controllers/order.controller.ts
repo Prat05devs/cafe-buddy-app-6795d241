@@ -5,13 +5,16 @@ import { AppError, asyncHandler } from '@/middleware/error.middleware';
 import { AuthRequest } from '@/middleware/auth.middleware';
 import { z } from 'zod';
 
+// Schema for order item creation (without orderId)
+const createOrderItemSchema = insertOrderItemSchema.omit({ orderId: true });
+
 const createOrderSchema = z.object({
   tableId: z.number().optional(),
   customerName: z.string().optional(),
   customerPhone: z.string().optional(),
   customerEmail: z.string().email().optional(),
   type: z.enum(['dine-in', 'takeaway', 'delivery']),
-  items: z.array(insertOrderItemSchema),
+  items: z.array(createOrderItemSchema),
   subtotal: z.string(),
   taxAmount: z.string().default('0'),
   discountAmount: z.string().default('0'),
@@ -63,6 +66,8 @@ export const createOrder = asyncHandler(async (req: AuthRequest, res: Response) 
   const orderWithUserId = {
     ...orderData,
     userId: req.user!.id,
+    status: 'pending' as const,
+    paymentStatus: 'pending' as const,
   };
 
   const result = await OrderService.createOrder(orderWithUserId, items);

@@ -28,22 +28,22 @@ const idParamSchema = z.object({
   id: z.string().regex(/^\d+$/, 'ID must be a number'),
 });
 
-// All routes require authentication
-router.use(authMiddleware);
+// Authentication disabled for development
+// router.use(authMiddleware);
 
 // Category routes
 router.get('/categories', getCategories);
 router.get('/categories/:id', validateParams(idParamSchema), getCategoryById);
-router.post('/categories', requireRole(['admin', 'manager']), validateBody(insertCategorySchema), createCategory);
-router.put('/categories/:id', requireRole(['admin', 'manager']), validateParams(idParamSchema), validateBody(updateCategorySchema), updateCategory);
-router.delete('/categories/:id', requireRole(['admin', 'manager']), validateParams(idParamSchema), deleteCategory);
+router.post('/categories', validateBody(insertCategorySchema), createCategory);
+router.put('/categories/:id', validateParams(idParamSchema), validateBody(updateCategorySchema), updateCategory);
+router.delete('/categories/:id', validateParams(idParamSchema), deleteCategory);
 
 // Menu item routes
 router.get('/items', getMenuItems);
 router.get('/items/:id', validateParams(idParamSchema), getMenuItemById);
-router.post('/items', requireRole(['admin', 'manager']), validateBody(insertMenuItemSchema), createMenuItem);
-router.put('/items/:id', requireRole(['admin', 'manager']), validateParams(idParamSchema), validateBody(updateMenuItemSchema), updateMenuItem);
-router.patch('/items/:id/toggle', requireRole(['admin', 'manager']), validateParams(idParamSchema), toggleMenuItemAvailability);
-router.delete('/items/:id', requireRole(['admin', 'manager']), validateParams(idParamSchema), deleteMenuItem);
+router.post('/items', validateBody(insertMenuItemSchema), createMenuItem);
+router.put('/items/:id', validateParams(idParamSchema), validateBody(updateMenuItemSchema), updateMenuItem);
+router.patch('/items/:id/toggle', validateParams(idParamSchema), toggleMenuItemAvailability);
+router.delete('/items/:id', validateParams(idParamSchema), deleteMenuItem);
 
 export default router;

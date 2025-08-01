@@ -43,7 +43,7 @@ export class OrderService {
 
   static async createOrder(
     orderData: InsertOrder, 
-    items: InsertOrderItem[]
+    items: Omit<InsertOrderItem, 'orderId'>[]
   ): Promise<{ order: Order; orderItems: OrderItem[] }> {
     const orderNumber = this.generateOrderNumber();
     
@@ -53,12 +53,16 @@ export class OrderService {
       orderNumber,
     }).returning();
 
-    // Create order items
+    // Create order items with proper types
     const orderItemsWithOrderId = items.map(item => ({
-      ...item,
       orderId: order.id,
-      totalPrice: (Number(item.unitPrice) * item.quantity).toString(),
-    }));
+      menuItemId: item.menuItemId,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      totalPrice: item.totalPrice || (Number(item.unitPrice) * item.quantity).toString(),
+      specialInstructions: item.specialInstructions,
+      customizations: (item.customizations as Record<string, any>) || {},
+    })) as any[];
 
     const createdOrderItems = await db.insert(orderItems)
       .values(orderItemsWithOrderId)
